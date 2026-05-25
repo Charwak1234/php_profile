@@ -623,3 +623,39 @@ SUCCESS MODAL
 .section-main-title {
     margin-bottom: 15px;
 }
+.custom-registry-table button {
+    padding: 6px 12px;
+    margin: 0 4px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s ease;
+}
+
+/*qulaification table action buttons*/
+
+/* VIEW BUTTON */
+.custom-registry-table .view {
+    background: #2563eb;
+    color: white;
+}
+
+.custom-registry-table .view:hover {
+    background: #1e40af;
+}
+
+/* DELETE BUTTON */
+.custom-registry-table .del {
+    background: #dc2626;
+    color: white;
+}
+
+.custom-registry-table .del:hover {
+    background: #991b1b;
+}
+.custom-registry-table td:last-child {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}

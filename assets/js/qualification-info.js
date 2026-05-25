@@ -4,7 +4,6 @@ if (window.__qualificationModuleLoaded) {
     window.__qualificationModuleLoaded = true;
 
 document.addEventListener("DOMContentLoaded", () => {
-document.addEventListener("DOMContentLoaded", () => {
 
     const section = document.getElementById("qualificationSection");
     const editToggleBtn = document.getElementById("qualEditToggleBtn");
@@ -36,31 +35,45 @@ document.addEventListener("DOMContentLoaded", () => {
     let certificateImageBase64 = null;
     let isEditable = false;
 
-    editToggleBtn.addEventListener("click", () => {
-        isEditable = !isEditable;
-        errorBanner.style.display = "none";
+    // =========================
+    // FIX 1: Upload click handler (IMPORTANT)
+    // =========================
+    if (uploadWrapper && fileInput) {
+        uploadWrapper.addEventListener("click", () => {
+            fileInput.click();
+        });
+    }
 
-        if (isEditable) {
-            editToggleBtn.innerHTML = `<i class="bi bi-x-circle"></i> Cancel`;
-            editToggleBtn.classList.add("active");
-            form.classList.remove("locked");
-            if (formFooter) formFooter.style.display = "flex";
-            setInputsDisabledState(false);
-        } else {
-            resetFormWorkspace();
-        }
-    });
+    // =========================
+    // EDIT TOGGLE
+    // =========================
+    if (editToggleBtn) {
+        editToggleBtn.addEventListener("click", () => {
+            isEditable = !isEditable;
+            errorBanner.style.display = "none";
+
+            if (isEditable) {
+                editToggleBtn.innerHTML = `<i class="bi bi-x-circle"></i> Cancel`;
+                editToggleBtn.classList.add("active");
+                form.classList.remove("locked");
+                if (formFooter) formFooter.style.display = "flex";
+                setInputsDisabledState(false);
+            } else {
+                resetFormWorkspace();
+            }
+        });
+    }
 
     function setInputsDisabledState(status) {
-        degreeInput.disabled = status;
-        instTypeInput.disabled = status;
-        boardInput.disabled = status;
-        courseNameInput.disabled = status;
-        branchNameInput.disabled = status;
-        marksObtainedInput.disabled = status;
-        marksOutOf.disabled = status;
-        gradeInput.disabled = status;
-        fileInput.disabled = status;
+        if (degreeInput) degreeInput.disabled = status;
+        if (instTypeInput) instTypeInput.disabled = status;
+        if (boardInput) boardInput.disabled = status;
+        if (courseNameInput) courseNameInput.disabled = status;
+        if (branchNameInput) branchNameInput.disabled = status;
+        if (marksObtainedInput) marksObtainedInput.disabled = status;
+        if (marksOutOf) marksOutOf.disabled = status;
+        if (gradeInput) gradeInput.disabled = status;
+        if (fileInput) fileInput.disabled = status;
 
         if (uploadWrapper) {
             uploadWrapper.classList.toggle("upload-disabled", status);
@@ -69,15 +82,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function resetFormWorkspace() {
         isEditable = false;
-        editToggleBtn.innerHTML = `<i class="bi bi-pencil-square"></i> Add Credentials`;
-        editToggleBtn.classList.remove("active");
-        form.classList.add("locked");
 
+        if (editToggleBtn) {
+            editToggleBtn.innerHTML = `<i class="bi bi-pencil-square"></i> Add Credentials`;
+            editToggleBtn.classList.remove("active");
+        }
+
+        form.classList.add("locked");
         if (formFooter) formFooter.style.display = "none";
 
         form.reset();
         certificateImageBase64 = null;
-        percentageInput.value = "";
+        if (percentageInput) percentageInput.value = "";
 
         if (uploadStatusText) {
             uploadStatusText.innerText = "Click here to upload your academic certificate image";
@@ -86,9 +102,12 @@ document.addEventListener("DOMContentLoaded", () => {
         setInputsDisabledState(true);
     }
 
+    // =========================
+    // PERCENTAGE CALC
+    // =========================
     function calculatePercentage() {
-        const obtained = parseFloat(marksObtainedInput.value);
-        const total = parseFloat(marksOutOf.value);
+        const obtained = parseFloat(marksObtainedInput?.value);
+        const total = parseFloat(marksOutOf?.value);
 
         if (!isNaN(obtained) && !isNaN(total) && total > 0) {
             if (obtained > total) {
@@ -102,67 +121,83 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    marksObtainedInput.addEventListener("input", calculatePercentage);
-    marksOutOf.addEventListener("input", calculatePercentage);
+    if (marksObtainedInput) marksObtainedInput.addEventListener("input", calculatePercentage);
+    if (marksOutOf) marksOutOf.addEventListener("input", calculatePercentage);
 
-    fileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    // =========================
+    // FIX 2: FILE UPLOAD HANDLER
+    // =========================
+    if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const validImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 
-        if (!validImageTypes.includes(file.type)) {
-            alert("Only PNG/JPG allowed");
-            fileInput.value = "";
-            certificateImageBase64 = null;
-            return;
-        }
+            if (!validImageTypes.includes(file.type)) {
+                alert("Only PNG/JPG allowed");
+                fileInput.value = "";
+                certificateImageBase64 = null;
+                return;
+            }
 
-        uploadStatusText.innerText = file.name;
+            if (uploadStatusText) {
+                uploadStatusText.innerText = file.name;
+            }
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            certificateImageBase64 = reader.result;
-        };
-        reader.readAsDataURL(file);
-    });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                certificateImageBase64 = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
 
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
+    // =========================
+    // FORM SUBMIT
+    // =========================
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
 
-        if (!degreeInput.value || !boardInput.value || !instTypeInput.value) {
-            errorText.innerText = "Required fields missing";
-            errorBanner.style.display = "block";
-            return;
-        }
+            if (!degreeInput.value || !boardInput.value || !instTypeInput.value) {
+                errorText.innerText = "Required fields missing";
+                errorBanner.style.display = "block";
+                return;
+            }
 
-        const rawPercentage = percentageInput.value.replace('%', '');
-        const id = "qual-" + Date.now();
+            const rawPercentage = percentageInput.value.replace('%', '');
+            const id = "qual-" + Date.now();
 
-        const payload = {
-            id,
-            degree: degreeInput.value,
-            board: boardInput.value,
-            institutionType: instTypeInput.value,
-            courseName: courseNameInput.value || "N/A",
-            branchName: branchNameInput.value || "N/A",
-            marksObtained: marksObtainedInput.value || "N/A",
-            marksOutOf: marksOutOf.value || "N/A",
-            percentage: rawPercentage || "N/A",
-            grade: gradeInput.value || "N/A",
-            image: certificateImageBase64
-        };
+            const payload = {
+                id,
+                degree: degreeInput.value,
+                board: boardInput.value,
+                institutionType: instTypeInput.value,
+                courseName: courseNameInput.value || "N/A",
+                branchName: branchNameInput.value || "N/A",
+                marksObtained: marksObtainedInput.value || "N/A",
+                marksOutOf: marksOutOf.value || "N/A",
+                percentage: rawPercentage || "N/A",
+                grade: gradeInput.value || "N/A",
+                image: certificateImageBase64
+            };
 
-        qualificationsList.push(payload);
-        render(payload);
+            qualificationsList.push(payload);
+            render(payload);
 
-        successPopup.style.display = "flex";
-        setTimeout(() => {
-            successPopup.style.display = "none";
-            resetFormWorkspace();
-        }, 2000);
-    });
+            successPopup.style.display = "flex";
 
+            setTimeout(() => {
+                successPopup.style.display = "none";
+                resetFormWorkspace();
+            }, 2000);
+        });
+    }
+
+    // =========================
+    // TABLE RENDER
+    // =========================
     function render(item) {
         const tr = document.createElement("tr");
         tr.id = item.id;
@@ -180,33 +215,54 @@ document.addEventListener("DOMContentLoaded", () => {
         tableBody.appendChild(tr);
     }
 
-    tableBody.addEventListener("click", (e) => {
+    // =========================
+    // TABLE ACTIONS
+    // =========================
+    if (tableBody) {
+        tableBody.addEventListener("click", (e) => {
 
-        const del = e.target.closest(".del");
-        if (del && isEditable) {
-            const id = del.dataset.id;
-            qualificationsList = qualificationsList.filter(i => i.id !== id);
-            document.getElementById(id)?.remove();
-        }
+            const del = e.target.closest(".del");
+            if (del && isEditable) {
+                const id = del.dataset.id;
+                qualificationsList = qualificationsList.filter(i => i.id !== id);
+                document.getElementById(id)?.remove();
+            }
 
-        const view = e.target.closest(".view");
-        if (view) {
-            const record = qualificationsList.find(i => i.id === view.dataset.id);
-            if (!record) return;
+            const view = e.target.closest(".view");
+            if (view) {
+                const record = qualificationsList.find(i => i.id === view.dataset.id);
+                if (!record) return;
 
-            document.getElementById("modalViewDegree").innerText = record.degree;
-            document.getElementById("modalViewType").innerText = record.institutionType;
-            document.getElementById("modalViewBoard").innerText = record.board;
-            document.getElementById("modalViewCourse").innerText = record.courseName;
-            document.getElementById("modalViewBranch").innerText = record.branchName;
-            document.getElementById("modalViewMarks").innerText = `${record.marksObtained}/${record.marksOutOf}`;
-            document.getElementById("modalViewPercentage").innerText = record.percentage;
-            document.getElementById("modalViewGrade").innerText = record.grade;
+                document.getElementById("modalViewDegree").innerText = record.degree;
+                document.getElementById("modalViewType").innerText = record.institutionType;
+                document.getElementById("modalViewBoard").innerText = record.board;
+                document.getElementById("modalViewCourse").innerText = record.courseName;
+                document.getElementById("modalViewBranch").innerText = record.branchName;
+                document.getElementById("modalViewMarks").innerText =
+                    `${record.marksObtained}/${record.marksOutOf}`;
+                document.getElementById("modalViewPercentage").innerText = record.percentage;
+                document.getElementById("modalViewGrade").innerText = record.grade;
+                const imgEl = document.getElementById("modalViewImg");
 
-            if (lightbox) lightbox.style.display = "flex";
-        }
-    });
+if (imgEl) {
+    if (record.image) {
+        imgEl.src = record.image;
+        imgEl.style.display = "block";
+        document.getElementById("modalViewEmptyAsset").style.display = "none";
+    } else {
+        imgEl.style.display = "none";
+        document.getElementById("modalViewEmptyAsset").style.display = "block";
+    }
+}
 
+                if (lightbox) lightbox.style.display = "flex";
+            }
+        });
+    }
+
+    // =========================
+    // MODAL CLOSE
+    // =========================
     if (closeLightboxBtn && lightbox) {
         closeLightboxBtn.addEventListener("click", () => {
             lightbox.style.display = "none";
@@ -218,6 +274,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-});
+
 });
 }
