@@ -1,0 +1,89 @@
+body{
+    margin: 0;
+    background: #f4f6fb;
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* FULL PAGE */
+.profile-page-wrapper{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* TOP NAVBAR SPACE */
+.existing-navbar-space{
+    height: 80px;
+    min-height: 70px;
+    width: 100%;
+    background: transparent;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* BELOW NAVBAR */
+.profile-body-wrapper{
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* OLD SIDEBAR SPACE */
+.existing-sidebar-space{
+    width: 260px;
+    min-width: 260px;
+    background: transparent;
+    border-right: 1px solid #e5e7eb;
+}
+
+/* PROFILE SECTION */
+.profile-container{
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* LEFT PROFILE SIDEBAR */
+.profile-sidebar{
+    width: 260px;
+    min-width: 260px;
+    background: #f9f7fc;
+    border-right: 1px solid #ddd;
+    padding: 25px 20px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* RIGHT CONTENT */
+.profile-content-area{
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    /* height: 100%; */
+    background: #f4f6fb;
+    max-width: 1100px
+}
+
+/* CUSTOM SCROLLBAR */
+.profile-sidebar::-webkit-scrollbar,
+.profile-content-area::-webkit-scrollbar{
+    width: 6px;
+}
+
+.profile-sidebar::-webkit-scrollbar-thumb,
+.profile-content-area::-webkit-scrollbar-thumb{
+    background: #c7c7c7;
+    border-radius: 20px;
+}
+
+/* ===================================
+DYNAMIC PROFILE SECTIONS
+=================================== */
+
+.profile-section{
+    display: none;
+}
+
+.profile-section.active-section{
+    display: block;
+}

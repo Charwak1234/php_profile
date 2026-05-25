@@ -1,0 +1,101 @@
+body{
+    margin: 0;
+    background: #f4f6fb;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+.dashboard-wrapper{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.existing-navbar-space{
+    height: 70px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dashboard-body{
+    flex: 1;
+    display: flex;
+}
+
+.existing-sidebar-space{
+    width: 260px;
+    border-right: 1px solid #e5e7eb;
+}
+
+.dashboard-content{
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.page-title-section{
+    margin-bottom: 30px;
+}
+
+.main-title{
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.sub-title{
+    color: #6b7280;
+}
+
+.dashboard-card{
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    display: block;
+    text-decoration: none;
+    transition: 0.3s;
+    border: 1px solid #ececec;
+    height: 100%;
+}
+
+.dashboard-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.card-icon{
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-icon i{
+    font-size: 30px;
+    color: white;
+}
+
+.profile-bg{
+    background: linear-gradient(135deg,#9333ea,#c084fc);
+}
+
+.bank-bg{
+    background: linear-gradient(135deg,#2563eb,#60a5fa);
+}
+
+.other-bg{
+    background: linear-gradient(135deg,#f97316,#fdba74);
+}
+
+.dashboard-card h4{
+    color: #111827;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.dashboard-card p{
+    color: #6b7280;
+    margin: 0;
+}
