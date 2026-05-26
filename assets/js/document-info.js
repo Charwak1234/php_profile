@@ -1,40 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ==========================================
-    // SELECTORS
-    // ==========================================
+    // ================= SELECTORS =================
+    const editBtn = document.getElementById("documentEditBtn");
+    const form = document.getElementById("documentForm");
 
-    const editBtn =
-        document.getElementById("documentEditBtn");
+    const successPopup = document.getElementById("successPopup");
 
-    const form =
-        document.getElementById("documentForm");
+    const tableBody = document.getElementById("documentTableBody");
 
-    const footer =
-        document.getElementById("documentFooter");
+    const lightboxOverlay = document.getElementById("lightboxOverlay");
+    const lightboxImage = document.getElementById("lightboxImage");
+    const closeLightboxBtn = document.getElementById("closeLightboxBtn");
 
-    const successPopup =
-        document.getElementById("successPopup");
+    const allInputs = form.querySelectorAll("input");
 
-    const tableBody =
-        document.getElementById("documentTableBody");
-
-    const lightboxOverlay =
-        document.getElementById("lightboxOverlay");
-
-    const lightboxImage =
-        document.getElementById("lightboxImage");
-
-    const closeLightboxBtn =
-        document.getElementById("closeLightboxBtn");
-
-    const allInputs =
-        form.querySelectorAll("input");
-
-    // ==========================================
-    // STATE
-    // ==========================================
-
+    // ================= STATE =================
     let isEditable = false;
 
     let documents = [];
@@ -46,290 +26,206 @@ document.addEventListener("DOMContentLoaded", () => {
         OPTIONAL: null
     };
 
-    // ==========================================
-    // INITIAL LOCK
-    // ==========================================
+    let lockedEssentialDocs = {
+        PAN: false,
+        LICENSE: false,
+        PASSPORT: false
+    };
 
+    // ================= INIT =================
     setDisabled(true);
 
-    // ==========================================
-    // TOGGLE EDIT
-    // ==========================================
-
+    // ================= EDIT TOGGLE =================
     editBtn.addEventListener("click", () => {
 
         isEditable = !isEditable;
 
         if (isEditable) {
-
-            editBtn.innerHTML =
-                `<i class="bi bi-x-circle"></i> Cancel`;
-
-            editBtn.classList.add("active");
-
-            footer.style.display = "flex";
-
-            setDisabled(false);
-
+            enableEditMode();
         } else {
-
-            resetForm();
-
+            disableEditMode();
         }
-
     });
 
-    // ==========================================
-    // ENABLE/DISABLE
-    // ==========================================
+    function enableEditMode() {
+        editBtn.innerHTML = `<i class="bi bi-x-circle"></i> Cancel`;
+        editBtn.classList.add("active");
 
-    function setDisabled(status) {
-
-        allInputs.forEach((input) => {
-            input.disabled = status;
-        });
-
+        setDisabled(false);
     }
 
-    // ==========================================
-    // RESET FORM
-    // ==========================================
-
-    function resetForm() {
-
-        isEditable = false;
-
-        editBtn.innerHTML =
-            `<i class="bi bi-pencil-square"></i> Edit & Upload`;
-
+    function disableEditMode() {
+        editBtn.innerHTML = `<i class="bi bi-pencil-square"></i> Edit Mode`;
         editBtn.classList.remove("active");
 
-        footer.style.display = "none";
-
         setDisabled(true);
-
-        form.reset();
-
-        refillFormAfterSubmit();
     }
 
-    // ==========================================
-    // REFILL FORM AFTER SUBMIT (FILE NAME FIXED)
-    // ==========================================
-
-    function refillFormAfterSubmit() {
-
-        if (savedDocuments.PAN) {
-
-            document.getElementById("panNumber").value =
-                savedDocuments.PAN.number;
-
-            if (document.getElementById("panPreview")) {
-                document.getElementById("panPreview").src =
-                    savedDocuments.PAN.image;
-            }
-
-            const el = document.getElementById("panFileName");
-            if (el) el.innerText = savedDocuments.PAN.fileName || "";
-        }
-
-        if (savedDocuments.LICENSE) {
-
-            document.getElementById("licenseNumber").value =
-                savedDocuments.LICENSE.number;
-
-            const el = document.getElementById("licenseFileName");
-            if (el) el.innerText = savedDocuments.LICENSE.fileName || "";
-        }
-
-        if (savedDocuments.PASSPORT) {
-
-            document.getElementById("passportNumber").value =
-                savedDocuments.PASSPORT.number;
-
-            const el = document.getElementById("passportFileName");
-            if (el) el.innerText = savedDocuments.PASSPORT.fileName || "";
-        }
-
-        if (savedDocuments.OPTIONAL) {
-
-            document.getElementById("optionalDocNumber").value =
-                savedDocuments.OPTIONAL.number;
-
-            document.getElementById("optionalDocName").value =
-                savedDocuments.OPTIONAL.name;
-
-            const el = document.getElementById("optionalFileName");
-            if (el) el.innerText = savedDocuments.OPTIONAL.fileName || "";
-        }
+    // ================= ENABLE / DISABLE INPUTS =================
+    function setDisabled(status) {
+        allInputs.forEach(input => {
+            input.disabled = status;
+        });
     }
 
-    // ==========================================
-    // FORM SUBMIT
-    // ==========================================
+    // ================= SAFETY CHECK =================
+    function requireEditMode() {
+        if (!isEditable) {
+            alert("Please enable Edit Mode first");
+            return false;
+        }
+        return true;
+    }
 
-    form.addEventListener("submit", (e) => {
+    // ================= SUBMIT FUNCTIONS =================
+    window.submitPAN = function () {
 
-        e.preventDefault();
+        if (!requireEditMode()) return;
 
-        processDocument("Essential", "PAN Card",
-            document.getElementById("panNumber").value,
-            document.getElementById("panFile").files[0]
-        );
+        if (lockedEssentialDocs.PAN) {
+            return alert("PAN already uploaded. Delete to update.");
+        }
 
-        processDocument("Essential", "Driving License",
-            document.getElementById("licenseNumber").value,
-            document.getElementById("licenseFile").files[0]
-        );
+        const number = document.getElementById("panNumber").value;
+        const file = document.getElementById("panFile").files[0];
 
-        processDocument("Essential", "Passport",
-            document.getElementById("passportNumber").value,
-            document.getElementById("passportFile").files[0]
-        );
+        if (!number || !file) return alert("Fill PAN details");
 
-        processDocument("Optional",
-            document.getElementById("optionalDocName").value,
-            document.getElementById("optionalDocNumber").value,
-            document.getElementById("optionalDocFile").files[0]
-        );
+        processDocument("Essential", "PAN Card", number, file, "PAN");
+    };
 
-        successPopup.style.display = "flex";
+    window.submitLICENSE = function () {
 
-        setTimeout(() => {
-            successPopup.style.display = "none";
-            resetForm();
-        }, 3000);
+        if (!requireEditMode()) return;
 
-    });
+        if (lockedEssentialDocs.LICENSE) {
+            return alert("License already uploaded. Delete to update.");
+        }
 
-    // ==========================================
-    // PROCESS DOCUMENT (FILE NAME FIXED)
-    // ==========================================
+        const number = document.getElementById("licenseNumber").value;
+        const file = document.getElementById("licenseFile").files[0];
 
-    function processDocument(category, name, number, file) {
+        if (!number || !file) return alert("Fill License details");
 
-        if (!number && !file) return;
+        processDocument("Essential", "Driving License", number, file, "LICENSE");
+    };
+
+    window.submitPASSPORT = function () {
+
+        if (!requireEditMode()) return;
+
+        if (lockedEssentialDocs.PASSPORT) {
+            return alert("Passport already uploaded. Delete to update.");
+        }
+
+        const number = document.getElementById("passportNumber").value;
+        const file = document.getElementById("passportFile").files[0];
+
+        if (!number || !file) return alert("Fill Passport details");
+
+        processDocument("Essential", "Passport", number, file, "PASSPORT");
+    };
+
+    window.submitOPTIONAL = function () {
+
+        if (!requireEditMode()) return;
+
+        const name = document.getElementById("optionalDocName").value;
+        const number = document.getElementById("optionalDocNumber").value;
+        const file = document.getElementById("optionalDocFile").files[0];
+
+        if (!name && !number && !file) {
+            return alert("Fill optional document");
+        }
+
+        processDocument("Optional", name || "Optional Doc", number, file, "OPTIONAL");
+    };
+
+    // ================= CORE PROCESS =================
+    function processDocument(category, name, number, file, key) {
 
         const reader = new FileReader();
 
         reader.onload = function (event) {
 
-            const image = event.target.result;
-
-            const documentData = {
-
+            const doc = {
                 id: Date.now() + Math.random(),
                 category,
                 name,
                 number: number || "N/A",
-                image,
-                fileName: file ? file.name : "No file uploaded"
+                image: event.target.result,
+                fileName: file?.name || ""
             };
 
-            documents.push(documentData);
-            appendTableRow(documentData);
+            documents.push(doc);
+            savedDocuments[key] = doc;
 
-            if (name === "PAN Card") savedDocuments.PAN = documentData;
-            if (name === "Driving License") savedDocuments.LICENSE = documentData;
-            if (name === "Passport") savedDocuments.PASSPORT = documentData;
+            if (category === "Essential") {
+                lockedEssentialDocs[key] = true;
+            }
+
+            appendTableRow(doc);
+            showSuccess();
         };
 
-        if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            reader.onload({ target: { result: "" } });
-        }
+        reader.readAsDataURL(file);
     }
 
-    // ==========================================
-    // TABLE ROW (UNCHANGED → DELETE SAFE)
-    // ==========================================
-
+    // ================= TABLE =================
     function appendTableRow(item) {
 
         const tr = document.createElement("tr");
 
-        tr.style.borderBottom = "1px solid #dbe2ea";
-
         tr.innerHTML = `
-            <td style="padding:12px 16px;">
-                <span class="complete-badge"
-                    style="background:#eef2ff;color:#6366f1;
-                    padding:4px 8px;border-radius:6px;font-size:0.85em;">
-                    ${item.category}
-                </span>
+            <td>${item.category}</td>
+            <td>${item.name}</td>
+            <td>${item.number}</td>
+
+            <td style="text-align:center;">
+                ${item.image
+                ? `<button type="button" class="view-btn" data-img="${item.image}">View</button>`
+                : `<span>No File</span>`}
             </td>
 
-            <td style="padding:12px 16px;font-weight:500;">
-                ${item.name}
-            </td>
-
-            <td style="padding:12px 16px;">
-                ${item.number}
-            </td>
-
-            <td style="padding:12px 16px;text-align:center;">
-                ${item.image ? `
-                    <button type="button"
-                        class="edit-toggle-btn view-btn"
-                        data-image="${item.image}">
-                        <i class="bi bi-eye"></i> View
-                    </button>
-                ` : `
-                    <span style="color:#94a3b8;">No File</span>
-                `}
-            </td>
-
-            <!-- DELETE BUTTON (RESTORED) -->
-            <td style="padding:12px 16px;text-align:center;">
-                <button class="delete-btn"
-                    data-id="${item.id}"
-                    style="color:white;">
-                    Delete
-                </button>
+            <td style="text-align:center;">
+                <button type="button" class="delete-btn" data-id="${item.id}">Delete</button>
             </td>
         `;
 
         tableBody.appendChild(tr);
     }
 
-    // ==========================================
-    // VIEW IMAGE
-    // ==========================================
-
+    // ================= VIEW + DELETE =================
     tableBody.addEventListener("click", (e) => {
 
-        const btn = e.target.closest(".view-btn");
+        const view = e.target.closest(".view-btn");
 
-        if (!btn) return;
-
-        lightboxImage.src = btn.dataset.image;
-        lightboxOverlay.style.display = "flex";
-
-    });
-
-    // ==========================================
-    // DELETE (RESTORED)
-    // ==========================================
-
-    tableBody.addEventListener("click", (e) => {
+        if (view) {
+            lightboxImage.src = view.dataset.img;
+            lightboxOverlay.style.display = "flex";
+            return;
+        }
 
         const del = e.target.closest(".delete-btn");
 
-        if (!del) return;
+        if (del) {
 
-        const id = del.dataset.id;
+            const id = del.dataset.id;
 
-        documents = documents.filter(d => d.id != id);
+            const item = documents.find(d => d.id == id);
 
-        del.closest("tr")?.remove();
+            if (item) {
+                if (item.name === "PAN Card") lockedEssentialDocs.PAN = false;
+                if (item.name === "Driving License") lockedEssentialDocs.LICENSE = false;
+                if (item.name === "Passport") lockedEssentialDocs.PASSPORT = false;
+            }
 
+            documents = documents.filter(d => d.id != id);
+            del.closest("tr")?.remove();
+        }
     });
 
-    // ==========================================
-    // CLOSE LIGHTBOX
-    // ==========================================
-
+    // ================= LIGHTBOX =================
     closeLightboxBtn.addEventListener("click", () => {
         lightboxOverlay.style.display = "none";
     });
@@ -339,5 +235,14 @@ document.addEventListener("DOMContentLoaded", () => {
             lightboxOverlay.style.display = "none";
         }
     });
+
+    // ================= SUCCESS =================
+    function showSuccess() {
+        successPopup.style.display = "block";
+
+        setTimeout(() => {
+            successPopup.style.display = "none";
+        }, 2000);
+    }
 
 });

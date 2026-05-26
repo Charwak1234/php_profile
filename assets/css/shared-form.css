@@ -659,3 +659,28 @@ SUCCESS MODAL
     gap: 8px;
     align-items: center;
 }
+/*blood group arrow */
+.select-left-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* hide default browser arrow */
+.left-arrow-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    padding-left: 35px; /* space for left icon */
+}
+
+/* left icon */
+.select-left-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 14px;
+    pointer-events: none;
+}

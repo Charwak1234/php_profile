@@ -132,15 +132,7 @@
 
             <tbody id="qualRegistryTableBody">
 
-                <tr id="qual-mock-1">
-                    <td>Degree</td>
-                    <td>Mumbai University</td>
-                    <td>80%</td>
-                    <td>
-                        <button class="mock-view-trigger">View</button>
-                        <button class="mock-delete-trigger">Delete</button>
-                    </td>
-                </tr>
+                
 
             </tbody>
         </table>

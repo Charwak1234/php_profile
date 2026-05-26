@@ -140,9 +140,7 @@ function submitAadharForm(){
     document.getElementById("aadharCard");
 
     const fields =
-    card.querySelectorAll(
-        "input, select, textarea"
-    );
+    card.querySelectorAll("input, select, textarea");
 
     let isValid = true;
 
@@ -154,32 +152,49 @@ function submitAadharForm(){
     fields.forEach(field => {
 
         if (
-
             field.hasAttribute("required") &&
             field.type !== "file" &&
             !field.value.trim()
-
         ) {
 
             field.style.borderColor = "red";
-
             isValid = false;
 
         }
-
         else {
-
             field.style.borderColor = "";
-
         }
 
     });
 
+    /* ==========================
+       ✅ NEW: MANDATORY FRONT IMAGE CHECK
+    ========================== */
+
+    const frontImage =
+    document.getElementById("aadharFrontImage");
+
+    if (!frontImage || frontImage.files.length === 0) {
+
+        alert("Aadhaar Front Image is required!");
+        isValid = false;
+
+        // highlight upload box
+        const box = document.getElementById("frontUploadBox");
+        if (box) {
+            box.style.border = "2px solid red";
+        }
+
+    } else {
+        const box = document.getElementById("frontUploadBox");
+        if (box) {
+            box.style.border = "";
+        }
+    }
+
     if (!isValid) {
 
-        alert(
-            "Please fill in all mandatory fields."
-        );
+        alert("Please fill in all mandatory fields.");
 
         return;
 
@@ -189,147 +204,79 @@ function submitAadharForm(){
        MARK COMPLETE
     ========================== */
 
-    localStorage.setItem(
-        "aadharCompleted",
-        "true"
-    );
-
-    /* ==========================
-       ELEMENTS
-    ========================== */
-
-    const button =
-    document.getElementById("aadharEditBtn");
-
-    const saveSection =
-    document.getElementById("aadharSaveSection");
-
-    const uploadSection =
-    document.getElementById("uploadSection");
-
-    const uploadTexts =
-    document.querySelectorAll(".upload-text");
-
-    const uploadIcons =
-    document.querySelectorAll(".upload-icon");
+    localStorage.setItem("aadharCompleted", "true");
 
     /* ==========================
        LOCK ALL FIELDS
     ========================== */
 
     fields.forEach(field => {
-
         field.disabled = true;
-
     });
 
     /* ==========================
-       RESET BUTTON
+       RESET UI (same as yours)
     ========================== */
 
-    button.innerHTML =
-    `<i class="bi bi-pencil-square"></i> Edit Info`;
+    const button = document.getElementById("aadharEditBtn");
+    const saveSection = document.getElementById("aadharSaveSection");
+    const uploadSection = document.getElementById("uploadSection");
+    const uploadTexts = document.querySelectorAll(".upload-text");
+    const uploadIcons = document.querySelectorAll(".upload-icon");
 
+    button.innerHTML = `<i class="bi bi-pencil-square"></i> Edit Info`;
     button.classList.remove("active");
 
-    /* ==========================
-       LOCK CARD
-    ========================== */
-
     card.classList.add("locked");
-
-    /* ==========================
-       HIDE SAVE SECTION
-    ========================== */
-
     saveSection.classList.add("d-none");
 
-    /* ==========================
-       DISABLE UPLOAD UI
-    ========================== */
-
-    uploadSection.classList.add(
-        "upload-disabled"
-    );
+    uploadSection.classList.add("upload-disabled");
 
     uploadTexts.forEach(text => {
-
-        text.innerText =
-        "Upload Locked";
-
+        text.innerText = "Upload Locked";
     });
 
     uploadIcons.forEach(icon => {
-
         icon.style.color = "#94a3b8";
-
     });
-
-    /* ==========================
-       HIDE AADHAR NUMBER
-    ========================== */
 
     document.querySelectorAll(".aadhar-field")
     .forEach(field => {
-
         field.type = "password";
-
     });
-
-    /* ==========================
-       CHECK PROFILE COMPLETION
-    ========================== */
 
     checkProfileCompletion();
 
     /* ==========================
-       SHOW SUCCESS MODAL
+       SUCCESS MODAL
     ========================== */
 
     const successModal =
-    document.getElementById(
-        "registrationSuccessModal"
-    );
+    document.getElementById("registrationSuccessModal");
 
     const closeBtn =
-    document.getElementById(
-        "closeSuccessModal"
-    );
+    document.getElementById("closeSuccessModal");
 
     if(successModal){
-
         successModal.style.display = "flex";
-
     }
-
-    /* ==========================
-       CLOSE MODAL + OPEN LOCATION
-    ========================== */
 
     if(closeBtn){
 
         closeBtn.onclick = () => {
 
-            // CLOSE MODAL
-            successModal.style.display =
-            "none";
+            successModal.style.display = "none";
 
-            // OPEN LOCATION SECTION
             const nextItem =
-            document.querySelector(
-                '[data-section="location-section"]'
-            );
+            document.querySelector('[data-section="location-section"]');
 
             if(nextItem){
-
                 nextItem.click();
-
             }
 
         };
 
     }
-
 }
 
 /* ===================================

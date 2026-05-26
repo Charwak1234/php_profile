@@ -103,45 +103,55 @@ AGE & SPOUSE LOGIC (Unchanged)
 AGE CALCULATION
 =================================== */
 
+/* ===================================
+AGE CALCULATION (UPDATED: years + months + days)
+=================================== */
+
 const dobField =
 document.getElementById("dob");
 
 const ageField =
 document.getElementById("age");
 
-if(dobField){
+function calculateAgeDetailed(dobValue) {
+
+    const dob = new Date(dobValue);
+    const today = new Date();
+
+    if (dob > today) return "";
+
+    let years = today.getFullYear() - dob.getFullYear();
+    let months = today.getMonth() - dob.getMonth();
+    let days = today.getDate() - dob.getDate();
+
+    // adjust days
+    if (days < 0) {
+        months--;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days += prevMonth.getDate();
+    }
+
+    // adjust months
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    return `${years} years ${months} months ${days} days old`;
+}
+
+if (dobField) {
 
     dobField.addEventListener("change", () => {
 
-        const dob =
-        new Date(dobField.value);
+        const value = dobField.value;
 
-        const today =
-        new Date();
-
-        let age =
-        today.getFullYear() -
-        dob.getFullYear();
-
-        const monthDiff =
-        today.getMonth() -
-        dob.getMonth();
-
-        if(
-            monthDiff < 0 ||
-            (
-                monthDiff === 0 &&
-                today.getDate() < dob.getDate()
-            )
-        ){
-
-            age--;
-
+        if (!value) {
+            ageField.value = "";
+            return;
         }
 
-        ageField.value =
-        age >= 0 ? age : "";
-
+        ageField.value = calculateAgeDetailed(value);
     });
 
 }

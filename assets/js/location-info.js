@@ -15,6 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const syncCheckbox =
         document.getElementById("locationAddressSyncCheckbox");
+        const currentPin = document.getElementById("currentPin");
+    const permanentPin = document.getElementById("permanentPin");
+
+    if (currentPin) currentPin.removeAttribute("required");
+    if (permanentPin) permanentPin.removeAttribute("required");
 
     const syncWrapper =
         document.getElementById("syncCheckboxWrapper");
@@ -60,7 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
         fields.forEach(field => {
 
             if (
-                field.id !== "locationAddressSyncCheckbox"
+                field.id !== "locationAddressSyncCheckbox" &&
+                field.id !== "currentPin" &&
+                field.id !== "permanentPin"
             ) {
                 field.disabled = !isEditable;
             }
@@ -108,8 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             fields.forEach(field => {
+
+            if (field.id !== "locationAddressSyncCheckbox") {
                 field.disabled = true;
-            });
+            }
+
+        });
 
         }
 

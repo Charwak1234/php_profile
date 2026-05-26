@@ -11,7 +11,6 @@
                 class="edit-toggle-btn"
                 id="profileEditBtn"
                 onclick="toggleProfileEdit()">
-                
 
             <i class="bi bi-pencil-square"></i>
             Edit Info
@@ -29,15 +28,34 @@
 
             <div class="avatar-wrapper">
 
-                <div class="lottie-container">
+                <div class="lottie-container" id="profileAvatarBox">
 
-                    <i class="bi bi-person-circle profile-avatar-icon"></i>
+                    <!-- LOTTIE ANIMATION (default state) -->
+                    <div id="profileLottie">
+                        <lottie-player
+                            src="assets/lottie/profile-avatar.json"
+                            background="transparent"
+                            speed="1"
+                            style="width:120px; height:120px;"
+                            loop
+                            autoplay>
+                        </lottie-player>
+                    </div>
+
+                    <!-- USER IMAGE (hidden initially) -->
+                    <img id="profileImagePreview"
+                         style="display:none; width:120px; height:120px; border-radius:50%; object-fit:cover;" />
 
                 </div>
 
             </div>
 
         </div>
+
+        <input type="file"
+               id="profileImageInput"
+               accept="image/*"
+               style="display:none;">
 
         <!-- GENDER + MARITAL -->
         <div class="row">
@@ -55,21 +73,10 @@
                             id="gender"
                             disabled required>
 
-                        <option value="">
-                            Select Gender
-                        </option>
-
-                        <option value="Male">
-                            Male
-                        </option>
-
-                        <option value="Female">
-                            Female
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
 
                     </select>
 
@@ -90,25 +97,11 @@
                             id="maritalStatus"
                             disabled required>
 
-                        <option value="">
-                            Select Status
-                        </option>
-
-                        <option value="Bachelor">
-                            Bachelor / Single
-                        </option>
-
-                        <option value="Married">
-                            Married
-                        </option>
-
-                        <option value="Divorced">
-                            Divorced
-                        </option>
-
-                        <option value="Widowed">
-                            Widowed
-                        </option>
+                        <option value="">Select Status</option>
+                        <option value="Bachelor">Bachelor / Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
 
                     </select>
 
@@ -302,148 +295,107 @@
             </div>
 
         </div>
-        <!-- ===================================
-BIRTH DETAILS
-=================================== -->
 
-<div class="row">
+        <!-- BIRTH DETAILS -->
+        <div class="row">
 
-    <!-- TIME OF BIRTH -->
-    <div class="col-md-6">
-        <div class="field-group">
+            <div class="col-md-6">
 
-            <label class="field-label">
-                Time of Birth
-            </label>
+                <div class="field-group">
 
-            <div style="display:flex; gap:10px;">
+                    <label class="field-label">Time of Birth</label>
 
-                <input
-                    type="time"
-                    id="birthTime"
-                    class="custom-input profile-field"
-                    disabled
-                >
+                    <div style="display:flex; gap:10px;">
 
-                <select
-                    id="birthTimeFormat"
-                    class="custom-input profile-field"
-                    disabled
-                    style="max-width:100px;"
-                >
+                        <input type="time"
+                               id="birthTime"
+                               class="custom-input profile-field"
+                               disabled>
 
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
+                        <select id="birthTimeFormat"
+                                class="custom-input profile-field"
+                                disabled
+                                style="max-width:100px;">
 
-                </select>
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
-    </div>
+            <div class="col-md-6">
 
-    <!-- PLACE OF BIRTH -->
-    <div class="col-md-6">
-        <div class="field-group">
+                <div class="field-group">
 
-            <label class="field-label">
-                Place of Birth (Village/Town)
-            </label>
+                    <label class="field-label">
+                        Place of Birth (Village/Town)
+                    </label>
 
-            <input
-                type="text"
-                id="birthPlace"
-                class="custom-input profile-field"
-                placeholder="Village / Town"
-                disabled
-            >
+                    <input type="text"
+                           id="birthPlace"
+                           class="custom-input profile-field"
+                           disabled
+                           placeholder="Village / Town">
 
-        </div>
-    </div>
+                </div>
+
+            </div>
 
         </div>
 
         <div class="row">
 
-            <!-- HOSPITAL NAME -->
             <div class="col-md-6">
+
                 <div class="field-group">
 
                     <label class="field-label">
                         Hospital Name
                     </label>
 
-                    <input
-                        type="text"
-                        id="birthHospital"
-                        class="custom-input profile-field"
-                        placeholder="Hospital Name"
-                        disabled
-                    >
+                    <input type="text"
+                           id="birthHospital"
+                           class="custom-input profile-field"
+                           disabled
+                           placeholder="Hospital Name">
 
                 </div>
+
             </div>
 
         </div>
-        <!-- ===================================
-BIRTH LOCATION FIELD
-CURRENTLY HIDDEN
-UNCOMMENT LATER
-=================================== -->
 
-<!--
+        <!-- BIRTH CERTIFICATE UPLOAD -->
+        <div class="field-group upload-disabled"
+             id="birthCertificateUploadSection">
 
-<div class="field-group">
+            <label class="field-label">
+                Upload Birth Certificate
+            </label>
 
-    <label class="field-label">
-        Birth Location
-    </label>
+            <div class="upload-area"
+                 id="birthCertificateUploadBox">
 
-    <input
-        type="text"
-        id="birthLocation"
-        class="custom-input profile-field"
-        placeholder="Birth Location"
-        disabled
-    >
+                <i class="bi bi-cloud-arrow-up upload-icon"></i>
 
-</div>
+                <p class="upload-text"
+                   id="birthCertificateUploadText">
+                    Upload Birth Certificate Image
+                </p>
 
--->
-            <!-- ===================================
-BIRTH CERTIFICATE UPLOAD
-=================================== -->
+                <input type="file"
+                       hidden
+                       id="birthCertificateImage"
+                       accept="image/*">
 
-<div class="field-group upload-disabled"
-     id="birthCertificateUploadSection">
+            </div>
 
-    <label class="field-label">
-        Upload Birth Certificate
-    </label>
-
-    <div class="upload-area"
-         id="birthCertificateUploadBox">
-
-        <i class="bi bi-cloud-arrow-up upload-icon"></i>
-
-        <p class="upload-text"
-           id="birthCertificateUploadText">
-
-            Upload Birth Certificate Image
-
-        </p>
-
-        <input
-            type="file"
-            hidden
-            id="birthCertificateImage"
-            accept="image/*"
-        >
-
-    </div>
-
-</div>
-        
+        </div>
 
         <!-- SAVE -->
         <div class="form-footer d-none"

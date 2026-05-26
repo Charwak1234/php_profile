@@ -91,8 +91,14 @@
             </h4>
 
             <div class="field-group">
-                <label class="field-label">Pin Code <span class="required-star">*</span></label>
-                <input type="text" id="currentPin" name="currentPin" class="custom-input" disabled placeholder="6-Digit PIN" maxlength="6" />
+                <label class="field-label">Pin Code</label>
+                <input type="text"
+                    id="currentPin"
+                    name="currentPin"
+                    class="custom-input"
+                    disabled
+                    placeholder="6-Digit PIN"
+                    maxlength="6" />
             </div>
 
             <div class="row">
@@ -231,8 +237,14 @@
             </h4>
 
             <div class="field-group">
-                <label class="field-label">Pin Code <span id="starPermPin" class="required-star">*</span></label>
-                <input type="text" id="permanentPin" name="permanentPin" class="custom-input" disabled placeholder="6-Digit PIN" maxlength="6" />
+                <label class="field-label">Pin Code</label>
+                <input type="text"
+                    id="permanentPin"
+                    name="permanentPin"
+                    class="custom-input"
+                    disabled
+                    placeholder="6-Digit PIN"
+                    maxlength="6" />
             </div>
 
             <div class="row">

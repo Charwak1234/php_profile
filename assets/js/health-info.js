@@ -1,10 +1,7 @@
 let isEditable = false;
 
-// initial data (same as React state example)
-let vitalsHistory = [
-    { id: 1, height: 175, weight: 70, date: "2026-01-15" },
-    { id: 2, height: 175, weight: 72, date: "2026-03-10" }
-];
+// initial data (EMPTY now — no default vitals)
+let vitalsHistory = [];
 
 // ================= INIT =================
 window.onload = function () {
@@ -150,8 +147,7 @@ function saveHealthData() {
         bloodGroup:
             document.getElementById("bloodGroup").value,
 
-        vitalsHistory:
-            vitalsHistory
+        vitalsHistory: vitalsHistory
     };
 
     console.log("Health Data:", data);

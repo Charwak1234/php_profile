@@ -34,7 +34,7 @@
             <input type="text"
                    id="fullName"
                    class="custom-input"
-                   value="Sahitya Baman"
+                   value=""
                    disabled
                    placeholder="Enter full name" required>
 
@@ -43,7 +43,7 @@
         <!-- AADHAR NUMBER -->
         <div class="field-group">
 
-            <label class="field-label" >
+            <label class="field-label">
                 Aadhar Number
             </label>
 
@@ -52,21 +52,21 @@
                 <input type="password"
                        class="custom-input aadhar-field"
                        maxlength="4"
-                       value="1234"
+                       value=""
                        disabled
                        placeholder="XXXX">
 
                 <input type="password"
                        class="custom-input aadhar-field"
                        maxlength="4"
-                       value="5678"
+                       value=""
                        disabled
                        placeholder="XXXX">
 
                 <input type="text"
                        class="custom-input aadhar-field"
                        maxlength="4"
-                       value="9012"
+                       value=""
                        disabled
                        placeholder="XXXX">
 
@@ -83,68 +83,75 @@
         </div>
 
         <!-- ===================================
-AADHAAR IMAGE UPLOAD SECTION
-=================================== -->
+        AADHAAR IMAGE UPLOAD SECTION
+        =================================== -->
 
-<div id="uploadSection">
+        <div id="uploadSection">
 
-    <!-- FRONT IMAGE -->
-    <div class="field-group upload-disabled">
+        <!-- FRONT IMAGE -->
+        <div class="field-group upload-disabled">
 
-        <label class="field-label">
-            Aadhaar Front / Upper View
-        </label>
+            <label class="field-label">
+                Aadhaar Front / Upper View <span style="color:red;">*</span>
+            </label>
 
-        <div class="upload-area"
-             id="frontUploadBox">
+            <div class="upload-area"
+                id="frontUploadBox">
 
-            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                <i class="bi bi-cloud-arrow-up upload-icon"></i>
 
-            <p class="upload-text"
-               id="frontUploadText">
-                Upload Front Side Image
-            </p>
+                <p class="upload-text"
+                id="frontUploadText">
+                    Upload Front Side Image (Required)
+                </p>
 
-            <input
-                type="file"
-                hidden
-                id="aadharFrontImage"
-                accept="image/*"
-            >
+                <input type="file"
+                    hidden
+                    id="aadharFrontImage"
+                    accept="image/*"
+                    required>
 
-        </div>
-
-    </div>
-
-    <!-- BACK IMAGE -->
-    <div class="field-group upload-disabled mt-3">
-
-        <label class="field-label">
-            Aadhaar Back / Lower View
-        </label>
-
-        <div class="upload-area"
-             id="backUploadBox">
-
-            <i class="bi bi-cloud-arrow-up upload-icon"></i>
-
-            <p class="upload-text"
-               id="backUploadText">
-                Upload Back Side Image
-            </p>
-
-            <input
-                type="file"
-                hidden
-                id="aadharBackImage"
-                accept="image/*"
-            >
+            </div>
 
         </div>
 
-    </div>
+            <!-- BACK IMAGE -->
+            <div class="field-group upload-disabled mt-3">
 
-</div>
+                <label class="field-label">
+                    Aadhaar Back / Lower View
+                </label>
+
+                <div class="upload-area"
+                     id="backUploadBox">
+
+                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
+
+                    <p class="upload-text"
+                       id="backUploadText">
+                        Upload Back Side Image
+                    </p>
+
+                    <input type="file"
+                           hidden
+                           id="aadharBackImage"
+                           accept="image/*">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- WARNING NOTE -->
+        <div class="aadhar-warning-note"
+             style="margin-top: 15px; padding: 12px; background: #ffcdcd; border-left: 5px solid #ffc107; border-radius: 6px; font-size: 14px; color: #664d03;">
+
+            Friends, your account will be verified and confirmed within 72 hours. 
+            If the information you have submitted does not match your Aadhaar details, your account will be suspended. 
+            Furthermore, if the information you provided is found to be incorrect or fraudulent, your account will be closed and cancelled.
+
+        </div>
 
     </div>
 
@@ -152,16 +159,18 @@ AADHAAR IMAGE UPLOAD SECTION
     <div class="form-footer d-none"
          id="aadharSaveSection">
 
-            <button class="action-btn"
-                    onclick="submitAadharForm()">
+        <button class="action-btn"
+                onclick="submitAadharForm()">
 
-                Submit for Verification
+            Submit for Verification
 
-            </button>
+        </button>
 
     </div>
 
 </div>
+
+<!-- SUCCESS MODAL -->
 <div id="registrationSuccessModal" class="success-modal-overlay">
 
     <div class="success-modal-box animate-pop-in">

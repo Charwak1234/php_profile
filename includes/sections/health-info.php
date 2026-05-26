@@ -20,16 +20,29 @@
     <div class="address-card locked" id="healthCard">
 
         <!-- ================= BLOOD GROUP ================= -->
-        <div class="field-group">
-            <label class="field-label">Permanent Blood Group</label>
+<div class="field-group">
 
-            <select class="form-select" id="bloodGroup" disabled>
-                <option value="A+">A+</option>
-                <option value="B+">B+</option>
-                <option value="O+">O+</option>
-                <option value="AB+">AB+</option>
-            </select>
-        </div>
+    <label class="field-label">Permanent Blood Group</label>
+
+    <div class="select-left-wrapper">
+
+        <i class="bi bi-chevron-down select-left-icon"></i>
+
+        <select class="form-select left-arrow-select" id="bloodGroup" disabled>
+            <option value="" selected disabled>Select Blood Group</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+        </select>
+
+    </div>
+
+</div>
 
         <!-- ================= CERTIFICATE UPLOAD ================= -->
         <div class="field-group">

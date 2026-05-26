@@ -19,37 +19,40 @@
     <!-- ================= CARD ================= -->
     <div class="address-card locked" id="contactCard">
 
-        <!-- ================= MOBILE ================= -->
-        <div class="field-group">
-            <label class="field-label">Current Mobile No.</label>
+        <div class="row" style="display:flex; gap:15px; flex-wrap:wrap;">
 
-            <div class="input-row">
-                <input type="text"
-                    id="countryCode"
-                    class="custom-input"
-                    style="width:80px"
-                    value="+91"
-                    disabled />
+            <!-- ================= MOBILE ================= -->
+            <div class="field-group" style="flex:1; min-width:250px;">
+                <label class="field-label">Current Mobile No.</label>
 
-                <input type="text"
-                    id="mobileNumber"
-                    class="custom-input"
-                    placeholder="Enter Mobile Number"
-                    value="9876543210"
-                    disabled />
+                <div class="input-row" style="display:flex; gap:10px;">
+                    <input type="text"
+                        id="countryCode"
+                        class="custom-input"
+                        style="width:80px"
+                        placeholder="+91"
+                        disabled />
+
+                    <input type="text"
+                        id="mobileNumber"
+                        class="custom-input"
+                        placeholder="Enter Mobile Number"
+                        disabled />
+                </div>
             </div>
-        </div>
 
-        <!-- ================= EMAIL ================= -->
-        <div class="field-group">
-            <label class="field-label">Current Email ID</label>
+            <!-- ================= EMAIL (PERMANENTLY LOCKED) ================= -->
+            <div class="field-group" style="flex:1; min-width:250px;">
+                <label class="field-label">Current Email ID</label>
 
-            <input type="email"
-                id="email"
-                class="custom-input"
-                placeholder="email@example.com"
-                value="charwak.bhonde@example.com"
-                disabled />
+                <input type="email"
+                    id="email"
+                    class="custom-input"
+                    placeholder="email@example.com"
+                    disabled
+                    style="background:#f3f4f6; cursor:not-allowed;" />
+            </div>
+
         </div>
 
     </div>
