@@ -89,7 +89,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const number = document.getElementById("panNumber").value;
         const file = document.getElementById("panFile").files[0];
 
-        if (!number || !file) return alert("Fill PAN details");
+        if (!number || !file){
+                return alert("Fill PAN details");
+            }
+
+            if(!isPanValid){
+                return alert(
+                    "Please enter PAN number using CAPITAL letters only."
+                );
+            }
 
         processDocument("Essential", "PAN Card", number, file, "PAN");
     };
@@ -246,3 +254,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+/* ===================================
+PAN CAPITAL LETTER VALIDATION
+=================================== */
+
+const panNumberField =
+document.getElementById("panNumber");
+
+const panErrorText =
+document.getElementById("panErrorText");
+
+let isPanValid = true;
+
+if(panNumberField){
+
+    panNumberField.addEventListener(
+        "input",
+        () => {
+
+            const value =
+            panNumberField.value;
+
+            // CHECK SMALL LETTERS
+            if(/[a-z]/.test(value)){
+
+                panErrorText.style.display =
+                "block";
+
+                panNumberField.style.borderColor =
+                "red";
+
+                isPanValid = false;
+
+            }else{
+
+                panErrorText.style.display =
+                "none";
+
+                panNumberField.style.borderColor =
+                "";
+
+                isPanValid = true;
+
+            }
+
+        }
+    );
+
+}

@@ -108,6 +108,15 @@
                 <div class="field-group" style="flex:1;">
                     <label class="field-label">PAN Number</label>
                     <input type="text" id="panNumber" class="custom-input" disabled>
+                    <small id="panErrorText"
+                        style="
+                                color:red;
+                                display:none;
+                                font-size:13px;
+                                margin-top:5px;
+                        ">
+                        PAN number must contain CAPITAL letters only.
+                    </small>
                 </div>
 
                 <div class="field-group" style="flex:1;">

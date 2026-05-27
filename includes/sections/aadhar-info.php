@@ -44,7 +44,7 @@
         <div class="field-group">
 
             <label class="field-label">
-                Aadhar Number
+                Aadhar Number <span style="color:red;">*</span>
             </label>
 
             <div class="input-row">
@@ -54,6 +54,7 @@
                        maxlength="4"
                        value=""
                        disabled
+                       required
                        placeholder="XXXX">
 
                 <input type="password"
@@ -61,6 +62,7 @@
                        maxlength="4"
                        value=""
                        disabled
+                          required
                        placeholder="XXXX">
 
                 <input type="text"
@@ -68,6 +70,7 @@
                        maxlength="4"
                        value=""
                        disabled
+                          required
                        placeholder="XXXX">
 
             </div>
