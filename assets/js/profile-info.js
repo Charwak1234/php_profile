@@ -331,3 +331,42 @@ if(
     );
 
 }
+/* ===================================
+12 HOUR TIME VALIDATION
+=================================== */
+
+const birthTimeField =
+document.getElementById("birthTime");
+
+if(birthTimeField){
+
+    birthTimeField.addEventListener(
+        "change",
+        () => {
+
+            const value =
+            birthTimeField.value;
+
+            if(!value) return;
+
+            const parts =
+            value.split(":");
+
+            const hour =
+            parseInt(parts[0]);
+
+            // ALLOW ONLY 00 to 12
+            if(hour > 12){
+
+                alert(
+                    "Please select time between 00:00 and 12:59 only."
+                );
+
+                birthTimeField.value = "";
+
+            }
+
+        }
+    );
+
+}
