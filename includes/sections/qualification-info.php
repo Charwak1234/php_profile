@@ -55,9 +55,74 @@
             </div>
         </div>
 
-        <div class="field-group">
-            <label class="field-label">Board / University *</label>
-            <input type="text" id="qualBoard" class="custom-input" disabled>
+<div class="field-group">
+    <label class="field-label">Board / University *</label>
+    <input type="text" id="qualBoard" class="custom-input" disabled>
+</div>
+
+<!-- =====================================================
+BACKEND NOTE:
+Store passing_month and passing_year in qualification table.
+
+Suggested columns:
+
+passing_month VARCHAR(20)
+passing_year INT
+
+While fetching qualification records, return data sorted by:
+
+ORDER BY passing_year ASC,
+         passing_month ASC
+
+This will show oldest qualification first
+and latest qualification last.
+===================================================== -->
+
+<div class="field-group">
+    <div class="row">
+
+        <div class="col-md-6">
+            <label class="field-label">
+                Passing Month <span class="required-star">*</span>
+            </label>
+
+            <select id="qualPassingMonth"
+                    class="custom-input"
+                    disabled>
+
+                <option value="">Select Month</option>
+
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+
+            </select>
+        </div>
+
+        <div class="col-md-6">
+                    <label class="field-label">
+                        Passing Year <span class="required-star">*</span>
+                    </label>
+
+                    <input type="number"
+                        id="qualPassingYear"
+                        class="custom-input"
+                        placeholder="Select Year"
+                        min="1950"
+                        max="2100"
+                        disabled>
+                </div>
+
+            </div>
         </div>
 
         <div class=field-group>
@@ -125,12 +190,34 @@
                 <tr>
                     <th>Degree</th>
                     <th>Board</th>
+                    <th>Passing</th>
                     <th>Percentage</th>
                     <th>Actions</th>
                 </tr>
             </thead>
 
-            <tbody id="qualRegistryTableBody">
+            <!-- =====================================================
+                    BACKEND NOTE:
+
+                    Fetch qualification records ordered by:
+
+                    ORDER BY passing_year ASC,
+                            passing_month ASC
+
+                    Example:
+
+                    SSC         March     2018
+                    HSC         March     2020
+                    Diploma     May       2023
+                    Degree      June      2026
+
+                    Return sorted records to frontend.
+
+                    Frontend currently performs temporary sorting
+                    until backend API integration is completed.
+                    ===================================================== -->
+
+                    <tbody id="qualRegistryTableBody">
 
                 
 
@@ -174,6 +261,25 @@
             <div class="modal-info-block">
                 <div class="modal-info-label">Branch</div>
                 <div id="modalViewBranch">-</div>
+            </div>
+            <div class="modal-info-block">
+                <div class="modal-info-label">
+                    Passing Month
+                </div>
+
+                <div id="modalViewPassingMonth">
+                    -
+                </div>
+            </div>
+
+            <div class="modal-info-block">
+                <div class="modal-info-label">
+                    Passing Year
+                </div>
+
+                <div id="modalViewPassingYear">
+                    -
+                </div>
             </div>
 
             <div class="modal-info-block">

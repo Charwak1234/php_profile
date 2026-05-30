@@ -74,10 +74,14 @@ $unlockClass = $isBasicProfileCompleted ? "" : "additional-hidden";
             <i class="bi bi-mortarboard"></i> Qualification Info
         </div>
 
+        <div class="sidebar-item additional-menu <?php echo $unlockClass; ?>" data-section="profession-section">
+            <i class="bi bi-briefcase"></i> Profession Info
+        </div>
+
         <!-- <div class="sidebar-item additional-menu <?php echo $unlockClass; ?>" data-section="vehicle-section">
             <i class="bi bi-truck"></i> Vehicle Info
         </div>
-        <div class="sidebar-item additional-menu <?php echo $unlockClass; ?>" data-section="Property-section">
+        <div class="sidebar-item additional-menu <?php echo $unlockClass; ?>" data-section="property-section">
             <i class="bi bi-house"></i> Property Info
         </div>
 

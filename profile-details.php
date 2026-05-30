@@ -49,6 +49,10 @@
                 <div class="profile-section" id="document-section">
                     <?php include 'includes/sections/document-info.php'; ?>
                 </div>
+                
+                <div class="profile-section" id="profession-section">
+                    <?php include 'includes/sections/profession-info.php'; ?>
+                </div>
 
                 <div class="profile-section" id="qualification-section">
                     <?php include 'includes/sections/qualification-info.php'; ?>
@@ -67,13 +71,14 @@
                     <div class="section-card">
                         <h2>Property</h2>
                     </div>
+                </div>
 
                 <div class="profile-section" id="family-section">
                     <div class="section-card">
                         <h2>Family Info</h2>
                     </div>
                 </div>
-                </div>
+                
 
                 <div class="profile-section" id="contact-section">
                     <?php include 'includes/sections/easy-contact.php'; ?>
@@ -98,6 +103,7 @@
 <script src="assets/js/health-info.js"></script>
 <script src="assets/js/easy-contact.js"></script>
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="assets/js/profession-info.js"></script>
 
 </body>
 </html>

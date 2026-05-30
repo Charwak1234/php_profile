@@ -1,9 +1,10 @@
 .section-card{
-    background: #fff;
+    background: #ffffff;
     padding: 22px;
     border-radius: 20px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.04);
     margin-bottom: 30px;
+    border-color: #006eff;
 }
 
 .section-top{
@@ -41,6 +42,7 @@
     border: 1px solid #d9deea;
     background: #f8f9fd;
     padding-left: 20px;
+   
 }
 
 .form-control:focus,
@@ -105,7 +107,7 @@ SECTION HEADER
 .section-main-title{
     font-size: 24px;
     font-weight: 700;
-    color: #1e293b;
+    color: #000000;
     margin: 0;
 }
 
@@ -607,7 +609,7 @@ SUCCESS MODAL
 
 .address-card.locked {
     opacity: 0.85;
-    pointer-events: none;
+    
     filter: grayscale(0.1);
 }
 
