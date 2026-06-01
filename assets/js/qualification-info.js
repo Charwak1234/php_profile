@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.click();
     });
 
+    
     // =========================
     // EDIT TOGGLE
     // =========================
