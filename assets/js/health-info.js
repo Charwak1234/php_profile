@@ -7,6 +7,7 @@ let vitalsHistory = [];
 window.onload = function () {
     setCurrentDate();
     renderTable();
+    loadHealth();
 };
 
 // ================= SET CURRENT DATE =================
@@ -150,9 +151,14 @@ function saveHealthData() {
         vitalsHistory: vitalsHistory
     };
 
-    console.log("Health Data:", data);
-
-    alert("Health data ready for backend (check console)");
+    // send to backend
+    submitHealth(data).then(resp => {
+        if (resp && resp.success) {
+            alert('Health data saved');
+        } else {
+            alert('Failed to save health data');
+        }
+    }).catch(() => alert('Failed to save health data'));
 
     // ================= LOCK AGAIN AFTER SAVE =================
 
@@ -192,4 +198,44 @@ function saveHealthData() {
     document
         .getElementById("healthCard")
         .classList.add("locked");
+}
+
+async function submitHealth(data) {
+    const form = new FormData();
+    form.append('bloodGroup', data.bloodGroup || '');
+    form.append('vitalsHistory', JSON.stringify(data.vitalsHistory || []));
+
+    const fileEl = document.getElementById('bloodCert');
+    if (fileEl && fileEl.files && fileEl.files.length) {
+        form.append('bloodCert', fileEl.files[0]);
+    }
+
+    const res = await fetch('../../api/profile/save_health.php', {
+        method: 'POST',
+        body: form,
+        credentials: 'same-origin'
+    });
+
+    return res.json();
+}
+
+async function loadHealth() {
+    try {
+        const res = await fetch('../../api/profile/get_health.php', { credentials: 'same-origin' });
+        const json = await res.json();
+        if (!json.success || !json.data) return;
+
+        const d = json.data;
+        if (d.blood_group) document.getElementById('bloodGroup').value = d.blood_group;
+
+        // load vitals history array
+        if (Array.isArray(d.vitalsHistory) && d.vitalsHistory.length) {
+            vitalsHistory = d.vitalsHistory.map((v, idx) => ({ id: Date.now() + idx, height: v.height, weight: v.weight, date: v.date }));
+            renderTable();
+        }
+
+        // TODO: show link to existing certificate if needed (d.blood_group_certificate)
+    } catch (err) {
+        console.warn('Failed to load health data', err);
+    }
 }

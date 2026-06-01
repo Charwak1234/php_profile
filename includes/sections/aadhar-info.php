@@ -50,6 +50,7 @@
             <div class="input-row">
 
                 <input type="password"
+                  id="aadharPart1"
                        class="custom-input aadhar-field"
                        maxlength="4"
                        value=""
@@ -58,6 +59,7 @@
                        placeholder="XXXX">
 
                 <input type="password"
+                  id="aadharPart2"
                        class="custom-input aadhar-field"
                        maxlength="4"
                        value=""
@@ -66,6 +68,7 @@
                        placeholder="XXXX">
 
                 <input type="text"
+                  id="aadharPart3"
                        class="custom-input aadhar-field"
                        maxlength="4"
                        value=""
@@ -162,7 +165,8 @@
     <div class="form-footer d-none"
          id="aadharSaveSection">
 
-        <button class="action-btn"
+        <button type="button"
+            class="action-btn"
                 onclick="submitAadharForm()">
 
             Submit for Verification

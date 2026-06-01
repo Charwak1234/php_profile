@@ -253,5 +253,12 @@
 
         </div>
 
+        <!-- FINAL SUBMIT -->
+        <div class="form-footer" style="margin-top:18px; display:flex; justify-content:flex-end;">
+            <button type="button" id="finalSubmitBtn" class="save-btn" onclick="finalSubmitDocuments()">
+                Submit All Documents
+            </button>
+        </div>
+
     </form>
 </div>

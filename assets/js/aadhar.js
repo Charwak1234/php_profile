@@ -2,6 +2,59 @@
 AADHAR EDIT TOGGLE
 =================================== */
 
+const AADHAR_SAVE_ENDPOINT = "../../api/profile/save_aadhaar.php";
+const AADHAR_GET_ENDPOINT = "../../api/profile/get_aadhaar.php";
+
+function aadharValue(id) {
+    const element = document.getElementById(id);
+    return element ? element.value.trim() : "";
+}
+
+function setAadharValue(id, value) {
+    const element = document.getElementById(id);
+    if (element && value !== null && value !== undefined) {
+        element.value = value;
+    }
+}
+
+function setAadharNumber(value) {
+    const digits = (value || "").replace(/\D/g, "").slice(0, 12);
+    setAadharValue("aadharPart1", digits.slice(0, 4));
+    setAadharValue("aadharPart2", digits.slice(4, 8));
+    setAadharValue("aadharPart3", digits.slice(8, 12));
+}
+
+function getAadharNumber() {
+    return ["aadharPart1", "aadharPart2", "aadharPart3"].map(aadharValue).join("");
+}
+
+async function loadAadharData() {
+    try {
+        const response = await fetch(AADHAR_GET_ENDPOINT, {
+            headers: {
+                Accept: "application/json"
+            }
+        });
+
+        const payload = await response.json();
+
+        if (!payload.success || !payload.data) {
+            return;
+        }
+
+        const data = payload.data;
+        setAadharValue("fullName", data.aadhaar_name || "");
+        setAadharNumber(data.aadhaar_number || "");
+
+        localStorage.setItem("aadharCompleted", "true");
+        if (typeof checkProfileCompletion === "function") {
+            checkProfileCompletion();
+        }
+    } catch (error) {
+        console.error("Unable to load Aadhaar details:", error);
+    }
+}
+
 function toggleAadharEdit(){
 
     const button =
@@ -200,83 +253,87 @@ function submitAadharForm(){
 
     }
 
-    /* ==========================
-       MARK COMPLETE
-    ========================== */
+    const formData = new FormData();
+    formData.append("aadhaarName", aadharValue("fullName"));
+    formData.append("aadhaarNumber", getAadharNumber());
 
-    localStorage.setItem("aadharCompleted", "true");
+    const selectedFrontImage = document.getElementById("aadharFrontImage");
+    const selectedBackImage = document.getElementById("aadharBackImage");
 
-    /* ==========================
-       LOCK ALL FIELDS
-    ========================== */
-
-    fields.forEach(field => {
-        field.disabled = true;
-    });
-
-    /* ==========================
-       RESET UI (same as yours)
-    ========================== */
-
-    const button = document.getElementById("aadharEditBtn");
-    const saveSection = document.getElementById("aadharSaveSection");
-    const uploadSection = document.getElementById("uploadSection");
-    const uploadTexts = document.querySelectorAll(".upload-text");
-    const uploadIcons = document.querySelectorAll(".upload-icon");
-
-    button.innerHTML = `<i class="bi bi-pencil-square"></i> Edit Info`;
-    button.classList.remove("active");
-
-    card.classList.add("locked");
-    saveSection.classList.add("d-none");
-
-    uploadSection.classList.add("upload-disabled");
-
-    uploadTexts.forEach(text => {
-        text.innerText = "Upload Locked";
-    });
-
-    uploadIcons.forEach(icon => {
-        icon.style.color = "#94a3b8";
-    });
-
-    document.querySelectorAll(".aadhar-field")
-    .forEach(field => {
-        field.type = "password";
-    });
-
-    checkProfileCompletion();
-
-    /* ==========================
-       SUCCESS MODAL
-    ========================== */
-
-    const successModal =
-    document.getElementById("registrationSuccessModal");
-
-    const closeBtn =
-    document.getElementById("closeSuccessModal");
-
-    if(successModal){
-        successModal.style.display = "flex";
+    if (selectedFrontImage && selectedFrontImage.files[0]) {
+        formData.append("aadharFrontImage", selectedFrontImage.files[0]);
     }
 
-    if(closeBtn){
-
-        closeBtn.onclick = () => {
-
-            successModal.style.display = "none";
-
-            const nextItem =
-            document.querySelector('[data-section="location-section"]');
-
-            if(nextItem){
-                nextItem.click();
-            }
-
-        };
-
+    if (selectedBackImage && selectedBackImage.files[0]) {
+        formData.append("aadharBackImage", selectedBackImage.files[0]);
     }
+
+    fetch(AADHAR_SAVE_ENDPOINT, {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(payload => {
+        if (!payload.success) {
+            alert(payload.message || "Failed to save Aadhaar details.");
+            return;
+        }
+
+        localStorage.setItem("aadharCompleted", "true");
+
+        fields.forEach(field => {
+            field.disabled = true;
+        });
+
+        const button = document.getElementById("aadharEditBtn");
+        const saveSection = document.getElementById("aadharSaveSection");
+        const uploadSection = document.getElementById("uploadSection");
+        const uploadTexts = document.querySelectorAll(".upload-text");
+        const uploadIcons = document.querySelectorAll(".upload-icon");
+
+        button.innerHTML = `<i class="bi bi-pencil-square"></i> Edit Info`;
+        button.classList.remove("active");
+
+        card.classList.add("locked");
+        saveSection.classList.add("d-none");
+        uploadSection.classList.add("upload-disabled");
+
+        uploadTexts.forEach(text => {
+            text.innerText = "Upload Locked";
+        });
+
+        uploadIcons.forEach(icon => {
+            icon.style.color = "#94a3b8";
+        });
+
+        document.querySelectorAll(".aadhar-field").forEach(field => {
+            field.type = "password";
+        });
+
+        checkProfileCompletion();
+
+        const successModal = document.getElementById("registrationSuccessModal");
+        const closeBtn = document.getElementById("closeSuccessModal");
+
+        if (successModal) {
+            successModal.style.display = "flex";
+        }
+
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                successModal.style.display = "none";
+
+                const nextItem = document.querySelector('[data-section="location-section"]');
+                if (nextItem) {
+                    nextItem.click();
+                }
+            };
+        }
+    })
+    .catch(error => {
+        console.error("Failed to save Aadhaar details:", error);
+        alert("Failed to save Aadhaar details.");
+    });
 }
 
 /* ===================================
@@ -419,3 +476,5 @@ if(backBox && backInput){
     );
 
 }
+
+document.addEventListener("DOMContentLoaded", loadAadharData);

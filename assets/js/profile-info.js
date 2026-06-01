@@ -1,6 +1,103 @@
 /* ===================================
 PROFILE EDIT TOGGLE
 =================================== */
+const PROFILE_SAVE_ENDPOINT = "../../api/profile/save_profile.php";
+const PROFILE_GET_ENDPOINT = "../../api/profile/get_profile.php";
+
+function profileValue(id) {
+    const element = document.getElementById(id);
+    return element ? element.value.trim() : "";
+}
+
+function setProfileValue(id, value) {
+    const element = document.getElementById(id);
+
+    if (element && value !== null && value !== undefined) {
+        element.value = value;
+    }
+}
+
+function normalizeBirthTime(timeValue) {
+    if (!timeValue) {
+        return { time: "", format: "AM" };
+    }
+
+    const parts = timeValue.split(":");
+    let hour = parseInt(parts[0], 10) || 0;
+    const minute = parts[1] || "00";
+    const second = parts[2] || "00";
+    const format = hour >= 12 ? "PM" : "AM";
+
+    if (hour === 0) {
+        hour = 12;
+    } else if (hour > 12) {
+        hour -= 12;
+    }
+
+    return {
+        time: `${String(hour).padStart(2, "0")}:${minute}:${second}`,
+        format
+    };
+}
+
+function formatAgeForDisplay(ageValue) {
+    if (ageValue === null || ageValue === undefined || ageValue === "") {
+        return "";
+    }
+
+    return `${ageValue} years`;
+}
+
+async function loadProfileData() {
+    const ageField = document.getElementById("age");
+
+    try {
+        const response = await fetch(PROFILE_GET_ENDPOINT, {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        const payload = await response.json();
+
+        if (!payload.success || !payload.data) {
+            return;
+        }
+
+        const data = payload.data;
+
+        setProfileValue("firstName", data.first_name || "");
+        setProfileValue("middleName", data.middle_name || "");
+        setProfileValue("lastName", data.last_name || "");
+        setProfileValue("gender", data.gender || "");
+        setProfileValue("maritalStatus", data.marital_status || "");
+        setProfileValue("dob", data.dob || "");
+        setProfileValue("birthPlace", data.birth_place || "");
+        setProfileValue("birthHospital", data.hospital_name || "");
+        setProfileValue("fatherName", data.father_name || "");
+        setProfileValue("motherName", data.mother_name || "");
+        setProfileValue("husbandName", data.husband_name || "");
+        setProfileValue("wifeName", data.wife_name || "");
+
+        if (data.birth_time) {
+            const normalized = normalizeBirthTime(data.birth_time);
+            setProfileValue("birthTime", normalized.time);
+            setProfileValue("birthTimeFormat", normalized.format);
+        }
+
+        if (ageField) {
+            ageField.value = formatAgeForDisplay(data.age);
+        }
+
+        localStorage.setItem("profileCompleted", "true");
+        if (typeof checkProfileCompletion === "function") {
+            checkProfileCompletion();
+        }
+    } catch (error) {
+        console.error("Unable to load profile data:", error);
+    }
+}
+
 function toggleProfileEdit(){
     const button = document.getElementById("profileEditBtn");
     const form = document.getElementById("profileForm");
@@ -50,9 +147,12 @@ if(birthCertificateInput){
 /* ===================================
 PROFILE FORM SUBMIT (UPDATED)
 =================================== */
-function submitProfileForm(){
+async function submitProfileForm(){
     const form = document.getElementById("profileForm");
     const fields = form.querySelectorAll(".profile-field");
+    const button = document.getElementById("profileEditBtn");
+    const saveSection = document.getElementById("profileSaveSection");
+    const birthCertificateInput = document.getElementById("birthCertificateImage");
     let isValid = true;
 
     // VALIDATION: Check required fields (exclude spouse fields)
@@ -71,16 +171,50 @@ function submitProfileForm(){
         return;
     }
 
-    // SUCCESS LOGIC
+    const formData = new FormData();
+
+    formData.append("firstName", profileValue("firstName"));
+    formData.append("middleName", profileValue("middleName"));
+    formData.append("lastName", profileValue("lastName"));
+    formData.append("gender", profileValue("gender"));
+    formData.append("maritalStatus", profileValue("maritalStatus"));
+    formData.append("fatherName", profileValue("fatherName"));
+    formData.append("motherName", profileValue("motherName"));
+    formData.append("husbandName", profileValue("husbandName"));
+    formData.append("wifeName", profileValue("wifeName"));
+    formData.append("dob", profileValue("dob"));
+    formData.append("birthTime", profileValue("birthTime"));
+    formData.append("birthTimeFormat", profileValue("birthTimeFormat") || "AM");
+    formData.append("birthPlace", profileValue("birthPlace"));
+    formData.append("birthHospital", profileValue("birthHospital"));
+
+    if (birthCertificateInput && birthCertificateInput.files[0]) {
+        formData.append("birthCertificateImage", birthCertificateInput.files[0]);
+    }
+
+    const saveResponse = await fetch(PROFILE_SAVE_ENDPOINT, {
+        method: "POST",
+        body: formData
+    });
+
+    const payload = await saveResponse.json();
+
+    if (!payload.success) {
+        alert(payload.message || "Failed to save profile data.");
+        return;
+    }
+
     localStorage.setItem("profileCompleted", "true");
-    const button = document.getElementById("profileEditBtn");
-    const saveSection = document.getElementById("profileSaveSection");
 
     fields.forEach(field => { field.disabled = true; });
     husbandField.disabled = true;
     wifeField.disabled = true;
     husbandWrapper.classList.add("spouse-disabled");
     wifeWrapper.classList.add("spouse-disabled");
+
+    if (birthCertificateInput) {
+        birthCertificateInput.disabled = true;
+    }
 
     button.innerHTML = `<i class="bi bi-pencil-square"></i> Edit Info`;
     button.classList.remove("active");
@@ -337,6 +471,8 @@ if(
 
 const birthTimeField =
 document.getElementById("birthTime");
+
+document.addEventListener("DOMContentLoaded", loadProfileData);
 
 if(birthTimeField){
 
