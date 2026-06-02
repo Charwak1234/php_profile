@@ -55,9 +55,85 @@
             </div>
         </div>
 
+<!-- =====================================================
+BACKEND NOTE:
+
+Dropdown values for Board / University category
+will eventually come from backend/API.
+
+Example response:
+
+[
+    "State Board",
+    "CBSE Board",
+    "ICSE Board",
+    "University",
+    "Autonomous"
+]
+
+Frontend currently uses temporary static options.
+
+===================================================== -->
+
 <div class="field-group">
-    <label class="field-label">Board / University *</label>
-    <input type="text" id="qualBoard" class="custom-input" disabled>
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <label class="field-label">
+                Board / University
+                <span class="required-star">*</span>
+            </label>
+
+            <select id="qualBoard"
+                    class="custom-input"
+                    disabled>
+
+                <option value="">
+                    Select Board / University
+                </option>
+
+                <!-- TEMP DATA -->
+                <option value="State Board">
+                    State Board
+                </option>
+
+                <option value="CBSE Board">
+                    CBSE Board
+                </option>
+
+                <option value="ICSE Board">
+                    ICSE Board
+                </option>
+
+                <option value="University">
+                    University
+                </option>
+
+                <option value="Autonomous">
+                    Autonomous
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <label class="field-label">
+                Name of Board / University
+                <span class="required-star">*</span>
+            </label>
+
+            <input type="text"
+                   id="qualBoardName"
+                   class="custom-input"
+                   placeholder="Enter Name"
+                   disabled>
+
+        </div>
+
+    </div>
 </div>
 
 <!-- =====================================================
@@ -189,7 +265,7 @@ and latest qualification last.
             <thead>
                 <tr>
                     <th>Degree</th>
-                    <th>Board</th>
+                    <th>Board / University Name</th>
                     <th>Passing</th>
                     <th>Percentage</th>
                     <th>Actions</th>
@@ -251,6 +327,15 @@ and latest qualification last.
             <div class="modal-info-block full-width">
                 <div class="modal-info-label">Board</div>
                 <div id="modalViewBoard">-</div>
+            </div>
+            <div class="modal-info-block full-width">
+                <div class="modal-info-label">
+                    Board / University Name
+                </div>
+
+                <div id="modalViewBoardName">
+                    -
+                </div>
             </div>
 
             <div class="modal-info-block">

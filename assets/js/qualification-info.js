@@ -4,7 +4,7 @@ if (window.__qualificationModuleLoaded) {
     window.__qualificationModuleLoaded = true;
 
 document.addEventListener("DOMContentLoaded", () => {
-
+console.log("Qualification JS Loaded");
     const section = document.getElementById("qualificationSection");
     const editToggleBtn = document.getElementById("qualEditToggleBtn");
     const form = document.getElementById("qualificationForm");
@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const degreeInput = document.getElementById("qualDegree");
     const instTypeInput = document.getElementById("qualInstType");
     const boardInput = document.getElementById("qualBoard");
+    const boardNameInput =
+    document.getElementById("qualBoardName");
     const courseNameInput = document.getElementById("qualCourseName");
     const branchNameInput = document.getElementById("qualBranchName");
     const marksObtainedInput = document.getElementById("qualMarksObtained");
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.click();
     });
 
-    
+
     // =========================
     // EDIT TOGGLE
     // =========================
@@ -59,7 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
             editToggleBtn.classList.add("active");
             form.classList.remove("locked");
             formFooter.style.display = "flex";
-            setInputsDisabledState(false);
+            console.log("EDIT MODE ENABLED");
+setInputsDisabledState(false);
         } else {
             resetFormWorkspace();
         }
@@ -70,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         degreeInput.disabled = status;
         instTypeInput.disabled = status;
         boardInput.disabled = status;
+        boardNameInput.disabled = status;
         courseNameInput.disabled = status;
         branchNameInput.disabled = status;
         marksObtainedInput.disabled = status;
@@ -159,7 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
     form?.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        if (!degreeInput.value || !boardInput.value || !instTypeInput.value) {
+        if (
+    !degreeInput.value ||
+    !boardInput.value ||
+    !boardNameInput.value ||
+    !instTypeInput.value
+) {
             errorText.innerText = "Required fields missing";
             errorBanner.style.display = "block";
             return;
@@ -171,6 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
             id,
             degree: degreeInput.value,
             board: boardInput.value,
+            boardName: boardNameInput.value,
             institutionType: instTypeInput.value,
             courseName: courseNameInput.value || "N/A",
             branchName: branchNameInput.value || "N/A",
@@ -222,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             tr.innerHTML = `
                 <td>${item.degree}</td>
-                <td>${item.board}</td>
+                <td>${item.boardName}</td>
                 <td>${item.passingMonth}/${item.passingYear}</td>
                 <td>${item.percentage}%</td>
                 <td>
@@ -264,6 +274,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("modalViewDegree").innerText = record.degree;
             document.getElementById("modalViewType").innerText = record.institutionType;
             document.getElementById("modalViewBoard").innerText = record.board;
+            document.getElementById("modalViewBoardName").innerText =
+    record.boardName || "-";
             document.getElementById("modalViewCourse").innerText = record.courseName;
             document.getElementById("modalViewBranch").innerText = record.branchName;
             document.getElementById("modalViewMarks").innerText =
