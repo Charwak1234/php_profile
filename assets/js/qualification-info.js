@@ -5,6 +5,19 @@ if (window.__qualificationModuleLoaded) {
 
 document.addEventListener("DOMContentLoaded", () => {
 console.log("Qualification JS Loaded");
+const qualBoard =
+    document.getElementById("qualBoard");
+
+const otherBoardWrapper =
+    document.getElementById("otherBoardWrapper");
+
+const otherBoardName =
+    document.getElementById("otherBoardName");
+console.log("qualBoard:", qualBoard);
+console.log("otherBoardWrapper:", otherBoardWrapper);
+console.log("otherBoardName:", otherBoardName);
+
+
     const section = document.getElementById("qualificationSection");
     const editToggleBtn = document.getElementById("qualEditToggleBtn");
     const form = document.getElementById("qualificationForm");
@@ -19,6 +32,11 @@ console.log("Qualification JS Loaded");
     const boardInput = document.getElementById("qualBoard");
     const boardNameInput =
     document.getElementById("qualBoardName");
+    const otherInstitutionWrapper =
+    document.getElementById("otherInstitutionWrapper");
+
+const otherInstitutionInput =
+    document.getElementById("otherInstitutionName");
     const courseNameInput = document.getElementById("qualCourseName");
     const branchNameInput = document.getElementById("qualBranchName");
     const marksObtainedInput = document.getElementById("qualMarksObtained");
@@ -40,6 +58,24 @@ console.log("Qualification JS Loaded");
     let qualificationsList = [];
     let certificateImageBase64 = null;
     let isEditable = false;
+        qualBoard.addEventListener("change", () => {
+
+            console.log("Board Changed:", qualBoard.value);
+
+            if (qualBoard.value === "Other") {
+
+                otherBoardWrapper.style.display = "block";
+                otherBoardName.disabled = false;
+
+            } else {
+
+                otherBoardWrapper.style.display = "none";
+                otherBoardName.disabled = true;
+                otherBoardName.value = "";
+
+            }
+
+        });
 
     // =========================
     // Upload click
@@ -53,6 +89,7 @@ console.log("Qualification JS Loaded");
     // EDIT TOGGLE
     // =========================
     editToggleBtn?.addEventListener("click", () => {
+        console.log("Edit button clicked");
         isEditable = !isEditable;
         errorBanner.style.display = "none";
 
@@ -62,34 +99,69 @@ console.log("Qualification JS Loaded");
             form.classList.remove("locked");
             formFooter.style.display = "flex";
             console.log("EDIT MODE ENABLED");
+            console.log("About to call setInputsDisabledState");
 setInputsDisabledState(false);
         } else {
             resetFormWorkspace();
         }
     });
 
-    function setInputsDisabledState(status) {
+function setInputsDisabledState(status) {
 
-        degreeInput.disabled = status;
-        instTypeInput.disabled = status;
-        boardInput.disabled = status;
-        boardNameInput.disabled = status;
-        courseNameInput.disabled = status;
-        branchNameInput.disabled = status;
-        marksObtainedInput.disabled = status;
-        marksOutOf.disabled = status;
-        gradeInput.disabled = status;
+    console.log("setInputsDisabledState called:", status);
 
-        // FIXED MONTH/YEAR
-        passingMonthInput.disabled = status;
-        passingYearInput.disabled = status;
+    if (otherBoardName) {
 
-        fileInput.disabled = status;
+        if (status) {
 
-        uploadWrapper.classList.toggle("upload-disabled", status);
+            otherBoardName.disabled = true;
+
+        } else {
+
+            otherBoardName.disabled =
+                boardInput.value !== "Other";
+        }
     }
 
+    degreeInput.disabled = status;
+    instTypeInput.disabled = status;
+    boardInput.disabled = status;
+    boardNameInput.disabled = status;
+
+    console.log("boardInput.disabled =", boardInput.disabled);
+
+    if (status) {
+
+        otherInstitutionInput.disabled = true;
+
+    } else {
+
+        otherInstitutionInput.disabled =
+            boardNameInput.value !== "Other";
+    }
+
+    courseNameInput.disabled = status;
+    branchNameInput.disabled = status;
+    marksObtainedInput.disabled = status;
+    marksOutOf.disabled = status;
+    gradeInput.disabled = status;
+
+    passingMonthInput.disabled = status;
+    passingYearInput.disabled = status;
+
+    fileInput.disabled = status;
+
+    uploadWrapper.classList.toggle("upload-disabled", status);
+}
+
     function resetFormWorkspace() {
+        if (otherBoardWrapper) {
+                otherBoardWrapper.style.display = "none";
+            }
+
+            if (otherBoardName) {
+                otherBoardName.value = "";
+            }
         isEditable = false;
 
         editToggleBtn.innerHTML = `<i class="bi bi-pencil-square"></i> Add Credentials`;
@@ -111,6 +183,10 @@ setInputsDisabledState(false);
         uploadStatusText.innerText =
             "Click here to upload your academic certificate image";
 
+            otherInstitutionWrapper.style.display = "none";
+
+            otherInstitutionInput.value = "";
+
         setInputsDisabledState(true);
     }
 
@@ -131,6 +207,42 @@ setInputsDisabledState(false);
 
     marksObtainedInput?.addEventListener("input", calculatePercentage);
     marksOutOf?.addEventListener("input", calculatePercentage);
+boardInput?.addEventListener("change", () => {
+
+    if (!otherBoardWrapper || !otherBoardName) {
+        return;
+    }
+
+    if (boardInput.value === "Other") {
+
+        otherBoardWrapper.style.display = "block";
+        otherBoardName.disabled = false;
+
+    } else {
+
+        otherBoardWrapper.style.display = "none";
+        otherBoardName.disabled = true;
+        otherBoardName.value = "";
+    }
+});
+boardNameInput?.addEventListener("change", () => {
+
+    if (!otherInstitutionWrapper || !otherInstitutionInput) {
+        return;
+    }
+
+    if (boardNameInput.value === "Other") {
+
+        otherInstitutionWrapper.style.display = "block";
+        otherInstitutionInput.disabled = false;
+
+    } else {
+
+        otherInstitutionWrapper.style.display = "none";
+        otherInstitutionInput.disabled = true;
+        otherInstitutionInput.value = "";
+    }
+});
 
     // =========================
     // FILE UPLOAD
@@ -163,24 +275,73 @@ setInputsDisabledState(false);
     form?.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        if (
-    !degreeInput.value ||
-    !boardInput.value ||
-    !boardNameInput.value ||
-    !instTypeInput.value
-) {
-            errorText.innerText = "Required fields missing";
-            errorBanner.style.display = "block";
-            return;
-        }
+            if (
+                !degreeInput.value ||
+                !boardInput.value ||
+                !boardNameInput.value ||
+                !instTypeInput.value
+            ) {
+                errorText.innerText = "Required fields missing";
+                errorBanner.style.display = "block";
+                return;
+            }
 
+            if (
+                boardNameInput.value === "Other" &&
+                !otherInstitutionInput.value.trim()
+            ) {
+                errorText.innerText =
+                    "Please enter institution name";
+
+                errorBanner.style.display = "block";
+
+                return;
+            }
+            if (
+                    boardInput.value === "Other" &&
+                    !otherBoardName.value.trim()
+                ) {
+                    errorText.innerText =
+                        "Please enter Board / University name";
+
+                    errorBanner.style.display = "block";
+
+                    return;
+                }
+                let finalBoardName = "";
+
+            let finalInstitutionName = "";
+                        if (boardInput.value === "Other") {
+
+                finalBoardName =
+                    otherBoardName.value.trim();
+
+            } else {
+
+                finalBoardName =
+                    boardInput.value;
+            }
+
+                if (boardNameInput.value === "Other") {
+
+                    finalInstitutionName =
+                        otherInstitutionInput.value.trim();
+
+                } else {
+
+                    finalInstitutionName =
+                        boardNameInput.value;
+                }
         const id = "qual-" + Date.now();
 
         const payload = {
             id,
             degree: degreeInput.value,
-            board: boardInput.value,
-            boardName: boardNameInput.value,
+            board: finalBoardName,
+            boardName: finalInstitutionName,
+
+                isCustomInstitution:
+                    boardNameInput.value === "Other",
             institutionType: instTypeInput.value,
             courseName: courseNameInput.value || "N/A",
             branchName: branchNameInput.value || "N/A",

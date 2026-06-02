@@ -86,55 +86,137 @@ Frontend currently uses temporary static options.
             </label>
 
             <select id="qualBoard"
-                    class="custom-input"
-                    disabled>
+                class="custom-input"
+                disabled>
 
-                <option value="">
-                    Select Board / University
-                </option>
+            <option value="">
+                Select Board / University
+            </option>
 
-                <!-- TEMP DATA -->
-                <option value="State Board">
-                    State Board
-                </option>
+            <option value="State Board">
+                State Board
+            </option>
 
-                <option value="CBSE Board">
-                    CBSE Board
-                </option>
+            <option value="CBSE Board">
+                CBSE Board
+            </option>
 
-                <option value="ICSE Board">
-                    ICSE Board
-                </option>
+            <option value="ICSE Board">
+                ICSE Board
+            </option>
 
-                <option value="University">
-                    University
-                </option>
+            <option value="University">
+                University
+            </option>
 
-                <option value="Autonomous">
-                    Autonomous
-                </option>
+            <option value="Autonomous">
+                Autonomous
+            </option>
 
-            </select>
+            <option value="Other">
+                Other
+            </option>
+
+        </select>
+        <div id="otherBoardWrapper"
+            style="display:none; margin-top:10px;">
+
+            <input type="text"
+                id="otherBoardName"
+                class="custom-input"
+                placeholder="Enter Board / University Name"
+                disabled>
+
+        </div>
+
 
         </div>
 
         <div class="col-md-6">
 
             <label class="field-label">
-                Name of Board / University
+                Name of Institute
                 <span class="required-star">*</span>
             </label>
+<!-- =====================================================
+BACKEND NOTE:
 
-            <input type="text"
-                   id="qualBoardName"
-                   class="custom-input"
-                   placeholder="Enter Name"
-                   disabled>
+This dropdown will be populated dynamically from API.
+
+Expected API response example:
+
+[
+    {
+        "id": 1,
+        "name": "RTMNU"
+    },
+    {
+        "id": 2,
+        "name": "Mumbai University"
+    },
+    {
+        "id": 3,
+        "name": "Pune University"
+    }
+]
+
+Frontend should render all institutions returned by API.
+
+Always append an additional option:
+
+<option value="Other">Other</option>
+
+When user selects "Other",
+show manual institution input field:
+
+#otherInstitutionWrapper
+
+Store manually entered institution name
+instead of dropdown value.
+
+===================================================== -->
+            <select id="qualBoardName"
+                    class="custom-input"
+                    disabled>
+
+                <option value="">
+                    Select Institution
+                </option>
+
+                <!-- TEMP DATA -->
+                <option value="RTMNU">
+                    RTMNU
+                </option>
+
+                <option value="Mumbai University">
+                    Mumbai University
+                </option>
+
+                <option value="Pune University">
+                    Pune University
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+            <div id="otherInstitutionWrapper"
+                style="display:none; margin-top:10px;">
+
+                <input type="text"
+                    id="otherInstitutionName"
+                    class="custom-input"
+                    placeholder="Enter Institution Name"
+                    disabled>
+
+            </div>
 
         </div>
 
     </div>
 </div>
+
 
 <!-- =====================================================
 BACKEND NOTE:
