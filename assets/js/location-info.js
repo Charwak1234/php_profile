@@ -271,17 +271,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         isEditable = !isEditable;
 
-        fields.forEach(field => {
+            fields.forEach(field => {
 
-            if (
-                field.id !== "locationAddressSyncCheckbox" &&
-                field.id !== "currentPin" &&
-                field.id !== "permanentPin"
-            ) {
-                field.disabled = !isEditable;
+                if (
+                    field.id !== "locationAddressSyncCheckbox" &&
+                    field.id !== "currentPin" &&
+                    field.id !== "permanentPin"
+                ) {
+                    field.disabled = !isEditable;
+                }
+
+            });
+
+            const currentPin = document.getElementById("currentPin");
+            const permanentPin = document.getElementById("permanentPin");
+
+            if (currentPin) {
+                currentPin.disabled = !isEditable;
             }
 
-        });
+            if (permanentPin) {
+                permanentPin.disabled = !isEditable;
+            }
 
         // sync checkbox
         if (syncCheckbox) {

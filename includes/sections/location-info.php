@@ -146,10 +146,28 @@
                 </div>
             </div>
 
-            <div class="field-group">
-                <label class="field-label">Map Link (Must add)</label>
-                <input type="url" id="currentMapLink" name="currentMapLink" class="custom-input" disabled placeholder="https://maps.google.com/..." />
-            </div>
+                <div class="field-group">
+                    <label class="field-label">Map Link (Must add)</label>
+
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        
+                        <input type="url"
+                            id="currentMapLink"
+                            name="currentMapLink"
+                            class="custom-input"
+                            disabled
+                            placeholder="https://maps.google.com/..."
+                            style="flex:1;" />
+
+                        <a href="https://maps.google.com"
+                        target="_blank"
+                        class="btn btn-primary"
+                        style="white-space:nowrap;">
+                            Google Link
+                        </a>
+
+                    </div>
+                </div>
 
             <div class="row">
                 <div class="col-md-4">
@@ -292,10 +310,28 @@
                 </div>
             </div>
 
-            <div class="field-group">
-                <label class="field-label">Map Link (Must add)</label>
-                <input type="url" id="permanentMapLink" name="permanentMapLink" class="custom-input" disabled />
-            </div>
+                <div class="field-group">
+                    <label class="field-label">Map Link (Must add)</label>
+
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        
+                        <input type="url"
+                            id="permanentMapLink"
+                            name="permanentMapLink"
+                            class="custom-input"
+                            disabled
+                            placeholder="https://maps.google.com/..."
+                            style="flex:1;" />
+
+                        <a href="https://maps.google.com"
+                        target="_blank"
+                        class="btn btn-primary"
+                        style="white-space:nowrap;">
+                            Google Link
+                        </a>
+
+                    </div>
+                </div>
 
             <div class="row">
                 <div class="col-md-4">
