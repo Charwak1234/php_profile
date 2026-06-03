@@ -22,6 +22,7 @@ function setCurrentDate() {
     el.value = formatted;
 }
 
+
 // ================= TOGGLE EDIT =================
 function toggleHealthEdit() {
 
