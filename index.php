@@ -1,3 +1,11 @@
+<?php
+require_once __DIR__ . '/../../db/dbcon.php';
+
+if (empty($_SESSION['id'])) {
+    header('Location: ../../authentication/sign-in.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 

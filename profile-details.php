@@ -1,3 +1,24 @@
+<?php
+require_once __DIR__ . '/../../api/profile/db.php';
+
+if (empty($_SESSION['id'])) {
+    header('Location: ../../authentication/sign-in.php');
+    exit;
+}
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+
+$profileAuthToken = profile_create_auth_token((string) $_SESSION['id']);
+
+function profile_asset(string $path): string
+{
+    $fullPath = __DIR__ . '/' . $path;
+    $version = is_file($fullPath) ? (string) filemtime($fullPath) : (string) time();
+
+    return $path . '?v=' . rawurlencode($version);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +33,33 @@
     <link rel="stylesheet" href="assets/css/profile-layout.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
     <link rel="stylesheet" href="assets/css/shared-form.css">
+    <script>
+        window.PROFILE_AUTH_TOKEN = <?php echo json_encode($profileAuthToken); ?>;
+        window.profileApiUrl = (url) => {
+            const requestUrl = new URL(url, window.location.href);
+            requestUrl.searchParams.set("profile_auth", window.PROFILE_AUTH_TOKEN);
+            return requestUrl.href;
+        };
+        window.fetch = ((originalFetch) => (resource, options = {}) => {
+            const url = typeof resource === "string" ? resource : resource.url;
+
+            if (url && (url.includes("/api/profile/") || url.includes("../../api/profile/"))) {
+                const requestUrl = window.profileApiUrl(url);
+                options = { ...options };
+                options.credentials = options.credentials || "same-origin";
+                options.headers = {
+                    ...(options.headers || {}),
+                    "X-Profile-Auth": window.PROFILE_AUTH_TOKEN
+                };
+
+                if (typeof resource === "string") {
+                    resource = requestUrl;
+                }
+            }
+
+            return originalFetch(resource, options);
+        })(window.fetch);
+    </script>
 </head>
 
 <body>
@@ -92,18 +140,18 @@
 
 </div>
 
-<script src="assets/js/common.js"></script>
-<script src="assets/js/sidebar.js"></script>
-<script src="assets/js/aadhar.js"></script>
-<script src="assets/js/profile-info.js"></script>
-<script src="assets/js/document-info.js"></script>
-<script src="assets/js/qualification-info.js"></script>
-<script src="assets/js/location-info.js"></script>
-<script src="assets/js/language-info.js"></script>
-<script src="assets/js/health-info.js"></script>
-<script src="assets/js/easy-contact.js"></script>
+<script src="<?php echo profile_asset('assets/js/common.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/sidebar.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/aadhar.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/profile-info.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/document-info.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/qualification-info.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/location-info.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/language-info.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/health-info.js'); ?>"></script>
+<script src="<?php echo profile_asset('assets/js/easy-contact.js'); ?>"></script>
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="assets/js/profession-info.js"></script>
+<script src="<?php echo profile_asset('assets/js/profession-info.js'); ?>"></script>
 
 </body>
 </html>

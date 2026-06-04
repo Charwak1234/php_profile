@@ -210,7 +210,7 @@ async function submitHealth(data) {
         form.append('bloodCert', fileEl.files[0]);
     }
 
-    const res = await fetch('../../api/profile/save_health.php', {
+    const res = await fetch(window.profileApiUrl('../../api/profile/save_health.php'), {
         method: 'POST',
         body: form,
         credentials: 'same-origin'
@@ -221,7 +221,7 @@ async function submitHealth(data) {
 
 async function loadHealth() {
     try {
-        const res = await fetch('../../api/profile/get_health.php', { credentials: 'same-origin' });
+        const res = await fetch(window.profileApiUrl('../../api/profile/get_health.php'), { credentials: 'same-origin' });
         const json = await res.json();
         if (!json.success || !json.data) return;
 
