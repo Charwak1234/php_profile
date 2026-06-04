@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const section =
         document.getElementById("location-section");
 
-    const LOCATION_SAVE_ENDPOINT = "../../api/profile/save_location.php";
-    const LOCATION_GET_ENDPOINT = "../../api/profile/get_location.php";
+    const LOCATION_SAVE_ENDPOINT = window.profileApiUrl("../../api/profile/save_location.php");
+    const LOCATION_GET_ENDPOINT = window.profileApiUrl("../../api/profile/get_location.php");
 
     console.log("STEP 2");
 

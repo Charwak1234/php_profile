@@ -146,7 +146,7 @@ async function saveCaste(data) {
     form.append('caste', data.caste || '');
     form.append('subCaste', data.subCaste || '');
 
-    const res = await fetch('../../api/profile/save_caste.php', {
+    const res = await fetch(window.profileApiUrl('../../api/profile/save_caste.php'), {
         method: 'POST',
         body: form,
         credentials: 'same-origin'
@@ -157,7 +157,7 @@ async function saveCaste(data) {
 
 async function loadCaste() {
     try {
-        const res = await fetch('../../api/profile/get_caste.php', { credentials: 'same-origin' });
+        const res = await fetch(window.profileApiUrl('../../api/profile/get_caste.php'), { credentials: 'same-origin' });
         const json = await res.json();
         if (!json.success || !json.data) return;
 

@@ -1,8 +1,8 @@
 /* ===================================
 PROFILE EDIT TOGGLE
 =================================== */
-const PROFILE_SAVE_ENDPOINT = "../../api/profile/save_profile.php";
-const PROFILE_GET_ENDPOINT = "../../api/profile/get_profile.php";
+const PROFILE_SAVE_ENDPOINT = window.profileApiUrl("../../api/profile/save_profile.php");
+const PROFILE_GET_ENDPOINT = window.profileApiUrl("../../api/profile/get_profile.php");
 
 function profileValue(id) {
     const element = document.getElementById(id);
@@ -53,6 +53,7 @@ async function loadProfileData() {
 
     try {
         const response = await fetch(PROFILE_GET_ENDPOINT, {
+            credentials: "same-origin",
             headers: {
                 "Accept": "application/json"
             }
@@ -194,6 +195,7 @@ async function submitProfileForm(){
 
     const saveResponse = await fetch(PROFILE_SAVE_ENDPOINT, {
         method: "POST",
+        credentials: "same-origin",
         body: formData
     });
 

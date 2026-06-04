@@ -2,8 +2,8 @@
 AADHAR EDIT TOGGLE
 =================================== */
 
-const AADHAR_SAVE_ENDPOINT = "../../api/profile/save_aadhaar.php";
-const AADHAR_GET_ENDPOINT = "../../api/profile/get_aadhaar.php";
+const AADHAR_SAVE_ENDPOINT = window.profileApiUrl("../../api/profile/save_aadhaar.php");
+const AADHAR_GET_ENDPOINT = window.profileApiUrl("../../api/profile/get_aadhaar.php");
 
 function aadharValue(id) {
     const element = document.getElementById(id);

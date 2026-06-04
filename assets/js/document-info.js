@@ -1,5 +1,45 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    const DOCUMENT_SAVE_URL = window.profileApiUrl("../../api/profile/save_document.php");
+
+    function documentImageUrl(path) {
+        if (!path) return null;
+        if (path.startsWith("data:") || path.startsWith("http") || path.startsWith("/")) {
+            return path;
+        }
+        return "../../" + String(path).replace(/^\.?\//, "");
+    }
+
+    function appendPanForm(fd, number, file) {
+        if (number) fd.append("pan_number", number);
+        if (file) fd.append("pan_image", file);
+    }
+
+    function appendLicenseForm(fd, number, file) {
+        if (number) fd.append("driving_license_number", number);
+        if (file) fd.append("driving_license_image", file);
+    }
+
+    function appendPassportForm(fd, number, file) {
+        if (number) fd.append("passport_number", number);
+        if (file) fd.append("passport_image", file);
+    }
+
+    function appendOptionalForm(fd, name, number, file) {
+        if (name) fd.append("optional_document_name", name);
+        if (number) fd.append("optional_document_number", number);
+        if (file) fd.append("optional_document_image", file);
+    }
+
+    async function saveDocumentsFormData(formData) {
+        const res = await fetch(DOCUMENT_SAVE_URL, {
+            method: "POST",
+            credentials: "same-origin",
+            body: formData
+        });
+        return res.json();
+    }
+
     // ================= SELECTORS =================
     const editBtn = document.getElementById("documentEditBtn");
     const form = document.getElementById("documentForm");
@@ -196,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 name,
                 number: number || "N/A",
                 image: event.target.result,
+                file: file || null,
                 fileName: file?.name || ""
             };
 
@@ -211,27 +252,26 @@ document.addEventListener("DOMContentLoaded", () => {
             // auto-save this single document to server so image gets persisted immediately
             (async () => {
                 try {
-                    const mapKey = key === 'PAN' ? 'pan' : key === 'LICENSE' ? 'license' : key === 'PASSPORT' ? 'passport' : 'optional';
-                    const payload = {};
-                    if (mapKey === 'optional') {
-                        payload[mapKey] = { name: doc.name, number: doc.number, image: doc.image };
+                    const fd = new FormData();
+
+                    if (key === "PAN") {
+                        appendPanForm(fd, doc.number, doc.file);
+                    } else if (key === "LICENSE") {
+                        appendLicenseForm(fd, doc.number, doc.file);
+                    } else if (key === "PASSPORT") {
+                        appendPassportForm(fd, doc.number, doc.file);
                     } else {
-                        payload[mapKey] = { number: doc.number, image: doc.image };
+                        appendOptionalForm(fd, doc.name, doc.number, doc.file);
                     }
 
-                    const resp = await fetch('../../api/profile/save_document.php', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const json = await resp.json().catch(() => null);
+                    const json = await saveDocumentsFormData(fd);
                     if (json && json.success) {
-                        // refresh saved documents to pick up server file paths
                         await loadSavedDocuments();
+                    } else if (json && json.message) {
+                        console.error("Auto-save document failed:", json.message);
                     }
                 } catch (e) {
-                    console.error('Auto-save document failed', e);
+                    console.error("Auto-save document failed", e);
                 }
             })();
         };
@@ -323,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================= LOAD SAVED DOCUMENTS =================
     async function loadSavedDocuments() {
         try {
-            const res = await fetch('../../api/profile/get_documents.php', { credentials: 'same-origin' });
+            const res = await fetch(window.profileApiUrl('../../api/profile/get_documents.php'), { credentials: 'same-origin' });
             const json = await res.json();
             if (!json.success || !json.data) return;
 
@@ -344,28 +384,31 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (d.pan_number || d.pan_image) {
-                const img = d.pan_image ? (d.pan_image.startsWith('data:') ? d.pan_image : ('../../' + d.pan_image)) : null;
+                const img = documentImageUrl(d.pan_image);
                 const obj = { number: d.pan_number || null, image: img };
                 savedDocuments.PAN = obj;
-                documents.push({ id: 'db-pan', category: 'PAN', name: 'PAN Card', number: obj.number || 'N/A', image: obj.image });
+                if (d.pan_number && d.pan_image) lockedEssentialDocs.PAN = true;
+                documents.push({ id: "db-pan", category: "PAN", name: "PAN Card", number: obj.number || "N/A", image: obj.image });
             }
             if (d.driving_license_number || d.driving_license_image) {
-                const img = d.driving_license_image ? (d.driving_license_image.startsWith('data:') ? d.driving_license_image : ('../../' + d.driving_license_image)) : null;
+                const img = documentImageUrl(d.driving_license_image);
                 const obj = { number: d.driving_license_number || null, image: img };
                 savedDocuments.LICENSE = obj;
-                documents.push({ id: 'db-license', category: 'License', name: 'Driving License', number: obj.number || 'N/A', image: obj.image });
+                if (d.driving_license_number && d.driving_license_image) lockedEssentialDocs.LICENSE = true;
+                documents.push({ id: "db-license", category: "License", name: "Driving License", number: obj.number || "N/A", image: obj.image });
             }
             if (d.passport_number || d.passport_image) {
-                const img = d.passport_image ? (d.passport_image.startsWith('data:') ? d.passport_image : ('../../' + d.passport_image)) : null;
+                const img = documentImageUrl(d.passport_image);
                 const obj = { number: d.passport_number || null, image: img };
                 savedDocuments.PASSPORT = obj;
-                documents.push({ id: 'db-passport', category: 'Passport', name: 'Passport', number: obj.number || 'N/A', image: obj.image });
+                if (d.passport_number && d.passport_image) lockedEssentialDocs.PASSPORT = true;
+                documents.push({ id: "db-passport", category: "Passport", name: "Passport", number: obj.number || "N/A", image: obj.image });
             }
             if (d.optional_document_name || d.optional_document_image || d.optional_document_number) {
-                const img = d.optional_document_image ? (d.optional_document_image.startsWith('data:') ? d.optional_document_image : ('../../' + d.optional_document_image)) : null;
+                const img = documentImageUrl(d.optional_document_image);
                 const obj = { name: d.optional_document_name || null, number: d.optional_document_number || null, image: img };
                 savedDocuments.OPTIONAL = obj;
-                documents.push({ id: 'db-optional', category: 'Optional', name: obj.name || 'Optional Doc', number: obj.number || 'N/A', image: obj.image });
+                documents.push({ id: "db-optional", category: "Optional", name: obj.name || "Optional Doc", number: obj.number || "N/A", image: obj.image });
             }
 
             tableBody.innerHTML = '';
@@ -428,98 +471,77 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================= FINAL SUBMIT =================
     window.finalSubmitDocuments = async function () {
         if (!requireEditMode()) return;
-        // helper to read File object to data URL
-        const readFileAsDataURL = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
 
-        // build payload from savedDocuments OR from current inputs (so user can click final submit without using per-doc submit buttons)
-        const payload = {};
+        const fd = new FormData();
+        let hasData = false;
+        const missingFiles = [];
 
-        // PAN - prefer current file input if present, otherwise use savedDocuments
-        {
-            const number = document.getElementById('panNumber')?.value;
-            const file = document.getElementById('panFile')?.files[0];
-            if (file) {
-                payload.pan = { number: number || null, image: await readFileAsDataURL(file) };
-            } else if (savedDocuments.PAN) {
-                payload.pan = { number: savedDocuments.PAN.number, image: savedDocuments.PAN.image };
-            } else if (number && number.trim()) {
-                payload.pan = { number: number || null };
+        const panNumber = document.getElementById("panNumber")?.value?.trim() || "";
+        const panFile = document.getElementById("panFile")?.files[0] || savedDocuments.PAN?.file || null;
+        if (panNumber || panFile) {
+            if (panNumber && !panFile && !savedDocuments.PAN?.image) {
+                missingFiles.push("PAN");
+            } else {
+                appendPanForm(fd, panNumber, panFile);
+                hasData = true;
             }
         }
 
-        // License - prefer current file input
-        {
-            const number = document.getElementById('licenseNumber')?.value;
-            const file = document.getElementById('licenseFile')?.files[0];
-            if (file) {
-                payload.license = { number: number || null, image: await readFileAsDataURL(file) };
-            } else if (savedDocuments.LICENSE) {
-                payload.license = { number: savedDocuments.LICENSE.number, image: savedDocuments.LICENSE.image };
-            } else if (number && number.trim()) {
-                payload.license = { number: number || null };
+        const licenseNumber = document.getElementById("licenseNumber")?.value?.trim() || "";
+        const licenseFile = document.getElementById("licenseFile")?.files[0] || savedDocuments.LICENSE?.file || null;
+        if (licenseNumber || licenseFile) {
+            if (licenseNumber && !licenseFile && !savedDocuments.LICENSE?.image) {
+                missingFiles.push("Driving License");
+            } else {
+                appendLicenseForm(fd, licenseNumber, licenseFile);
+                hasData = true;
             }
         }
 
-        // Passport - prefer current file input
-        {
-            const number = document.getElementById('passportNumber')?.value;
-            const file = document.getElementById('passportFile')?.files[0];
-            if (file) {
-                payload.passport = { number: number || null, image: await readFileAsDataURL(file) };
-            } else if (savedDocuments.PASSPORT) {
-                payload.passport = { number: savedDocuments.PASSPORT.number, image: savedDocuments.PASSPORT.image };
-            } else if (number && number.trim()) {
-                payload.passport = { number: number || null };
+        const passportNumber = document.getElementById("passportNumber")?.value?.trim() || "";
+        const passportFile = document.getElementById("passportFile")?.files[0] || savedDocuments.PASSPORT?.file || null;
+        if (passportNumber || passportFile) {
+            if (passportNumber && !passportFile && !savedDocuments.PASSPORT?.image) {
+                missingFiles.push("Passport");
+            } else {
+                appendPassportForm(fd, passportNumber, passportFile);
+                hasData = true;
             }
         }
 
-        // Optional
-        // Optional - prefer current file input
-        {
-            const name = document.getElementById('optionalDocName')?.value;
-            const number = document.getElementById('optionalDocNumber')?.value;
-            const file = document.getElementById('optionalDocFile')?.files[0];
-            if (file) {
-                payload.optional = { name: name || null, number: number || null, image: await readFileAsDataURL(file) };
-            } else if (savedDocuments.OPTIONAL) {
-                payload.optional = { name: savedDocuments.OPTIONAL.name, number: savedDocuments.OPTIONAL.number, image: savedDocuments.OPTIONAL.image };
-            } else if ((name && name.trim()) || (number && number.trim())) {
-                payload.optional = { name: name || null, number: number || null };
+        const optionalName = document.getElementById("optionalDocName")?.value?.trim() || "";
+        const optionalNumber = document.getElementById("optionalDocNumber")?.value?.trim() || "";
+        const optionalFile = document.getElementById("optionalDocFile")?.files[0] || savedDocuments.OPTIONAL?.file || null;
+        if (optionalName || optionalNumber || optionalFile) {
+            if ((optionalName || optionalNumber) && !optionalFile && !savedDocuments.OPTIONAL?.image) {
+                missingFiles.push("Optional document");
+            } else {
+                appendOptionalForm(fd, optionalName, optionalNumber, optionalFile);
+                hasData = true;
             }
         }
 
-        // remove empty entries
-        Object.keys(payload).forEach(k => {
-            const v = payload[k];
-            if (!v || (typeof v === 'object' && Object.keys(v).length === 0)) delete payload[k];
-        });
+        if (missingFiles.length) {
+            return alert("Please upload an image for: " + missingFiles.join(", "));
+        }
 
-        if (Object.keys(payload).length === 0) return alert('No documents to submit');
+        if (!hasData) {
+            return alert("No documents to submit");
+        }
 
         try {
-            const res = await fetch('../../api/profile/save_document.php', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            const json = await saveDocumentsFormData(fd);
 
-            const json = await res.json();
             if (json.success) {
-                alert('All documents submitted');
-                // lock inputs
+                alert("All documents submitted");
+                await loadSavedDocuments();
                 disableEditMode();
             } else {
-                alert('Failed to submit documents: ' + (json.message || ''));
+                alert("Failed to submit documents: " + (json.message || ""));
             }
         } catch (err) {
             console.error(err);
-            alert('Failed to submit documents');
+            alert("Failed to submit documents");
         }
     };
 
