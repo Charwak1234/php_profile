@@ -99,3 +99,6 @@ body{
     color: #6b7280;
     margin: 0;
 }
+.bio-bg {
+    background: linear-gradient(135deg, #0dcaf0, #0d6efd);
+}

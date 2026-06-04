@@ -69,24 +69,43 @@
 
                 </div>
 
-                <!-- BANK CARD -->
-                <div class="col-md-4">
+                                    <!-- BIO CARD -->
+                    <div class="col-md-4">
 
-                    <a href="bank-details.php" class="dashboard-card">
+                        <a href="bio-details.php" class="dashboard-card">
 
-                        <div class="card-icon bank-bg">
-                            <i class="bi bi-bank"></i>
-                        </div>
+                            <div class="card-icon bio-bg">
+                                <i class="bi bi-file-earmark-person"></i>
+                            </div>
 
-                        <h4>Bank Details</h4>
+                            <h4>BIO</h4>
 
-                        <p>
-                            Manage bank account information
-                        </p>
+                            <p>
+                                Manage biography and personal information
+                            </p>
 
-                    </a>
+                        </a>
 
-                </div>
+                    </div>
+
+                    <!-- BANK CARD -->
+                    <div class="col-md-4">
+
+                        <a href="bank-details.php" class="dashboard-card">
+
+                            <div class="card-icon bank-bg">
+                                <i class="bi bi-bank"></i>
+                            </div>
+
+                            <h4>Bank Details</h4>
+
+                            <p>
+                                Manage bank account information
+                            </p>
+
+                        </a>
+
+                    </div>
 
                 <!-- OTHER CARD -->
                 <div class="col-md-4">
