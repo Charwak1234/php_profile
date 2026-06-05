@@ -1,6 +1,25 @@
 <?php
 require_once __DIR__ . '/../../api/profile/db.php';
 
+// Ensure errors are visible for debugging this page specifically (dbcon.php may disable them)
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+// Register shutdown function to surface fatal errors (useful when display_errors is overridden)
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if ($err && ($err['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR))) {
+        http_response_code(500);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Fatal error detected:\n";
+        echo "Message: " . ($err['message'] ?? '');
+        echo "\nFile: " . ($err['file'] ?? '');
+        echo "\nLine: " . ($err['line'] ?? '');
+        // flush output so browser shows it immediately
+        flush();
+    }
+});
+
 if (empty($_SESSION['id'])) {
     header('Location: ../../authentication/sign-in.php');
     exit;
@@ -9,7 +28,17 @@ if (empty($_SESSION['id'])) {
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 
-$profileAuthToken = profile_create_auth_token((string) $_SESSION['id']);
+$profileAuthToken = null;
+if (function_exists('profile_create_auth_token')) {
+    $profileAuthToken = profile_create_auth_token((string) $_SESSION['id']);
+} else {
+    // Fallback token for pages that expect a token but when helper isn't available.
+    try {
+        $profileAuthToken = bin2hex(random_bytes(16));
+    } catch (Throwable $t) {
+        $profileAuthToken = sha1(uniqid((string) ($_SESSION['id'] ?? ''), true));
+    }
+}
 
 function profile_asset(string $path): string
 {

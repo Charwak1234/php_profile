@@ -49,12 +49,7 @@
                         <label class="field-label">Select State <span class="required-star">*</span></label>
                         <select class="custom-input" id="currentState" name="currentState" disabled>
                             <option value="">Select State</option>
-                            <option value="Ladakh(ULA)">Ladakh(ULA)</option>
-                            <option value="Lakshadweep(ULD)">Lakshadweep(ULD)</option>
-                            <option value="Madhya Pradesh(SMP)">Madhya Pradesh(SMP)</option>
-                            <option value="Maharashtra(SMH)">Maharashtra(SMH)</option>
-                            <option value="Manipur(SMN)">Manipur(SMN)</option>
-                        </select>
+                           </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -90,16 +85,13 @@
                 Pin Code Details
             </h4>
 
-            <div class="field-group">
-                <label class="field-label">Pin Code</label>
-                <input type="text"
-                    id="currentPin"
-                    name="currentPin"
-                    class="custom-input"
-                    disabled
-                    placeholder="6-Digit PIN"
-                    maxlength="6" />
-            </div>
+            <div class="col-md-12">
+                    <div class="field-group">
+                        <label class="field-label">Select Pin Code<span id="starCurrentpin" class="required-star">*</span></label>
+                        <select class="custom-input" id="currentPincode" name="currentPincode" disabled>
+                            <option value="">Select Pin Code</option>
+                        </select>
+                    </div>
 
             <div class="row">
                 <div class="col-md-6">
@@ -213,12 +205,7 @@
                         <label class="field-label">Select State <span id="starPermState" class="required-star">*</span></label>
                         <select class="custom-input" id="permanentState" name="permanentState" disabled>
                             <option value="">Select State</option>
-                            <option value="Ladakh(ULA)">Ladakh(ULA)</option>
-                            <option value="Lakshadweep(ULD)">Lakshadweep(ULD)</option>
-                            <option value="Madhya Pradesh(SMP)">Madhya Pradesh(SMP)</option>
-                            <option value="Maharashtra(SMH)">Maharashtra(SMH)</option>
-                            <option value="Manipur(SMN)">Manipur(SMN)</option>
-                        </select>
+                           </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -254,16 +241,13 @@
                 Pin Code Details
             </h4>
 
-            <div class="field-group">
-                <label class="field-label">Pin Code</label>
-                <input type="text"
-                    id="permanentPin"
-                    name="permanentPin"
-                    class="custom-input"
-                    disabled
-                    placeholder="6-Digit PIN"
-                    maxlength="6" />
-            </div>
+            <div class="col-md-12">
+                    <div class="field-group">
+                        <label class="field-label">Select Pin Code <span id="starPermPin" class="required-star">*</span></label>
+                        <select class="custom-input" id="permanentPincode" name="permanentPincode" disabled>
+                            <option value="">Select Pincode</option>
+                        </select>
+                    </div>
 
             <div class="row">
                 <div class="col-md-6">

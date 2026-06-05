@@ -32,6 +32,281 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("STEP 2");
 
+// SMARTBULKJI APIs
+    const STATE_API = "https://smartbulkji.com/api/getallstate.php";
+    const DISTRICT_API = "https://smartbulkji.com/api/getalldistrict.php?stateid=";
+    const CITY_API = "https://smartbulkji.com/api/getallcity.php?districtid=";
+    const VILLAGE_API = "https://smartbulkji.com/api/getallvillage.php?cityid=";
+    const PINCODE_API = "https://smartbulkji.com/api/getallpincode.php?villageid=";
+
+    // CURRENT ADDRESS
+    const currentState = document.getElementById("currentState");
+    const currentDistrict = document.getElementById("currentDistrict");
+    const currentCity = document.getElementById("currentCityTaluka");
+    const currentVillage = document.getElementById("currentVillageTown");
+
+    // PERMANENT ADDRESS
+    const permanentState = document.getElementById("permanentState");
+    const permanentDistrict = document.getElementById("permanentDistrict");
+    const permanentCity = document.getElementById("permanentCityTaluka");
+    const permanentVillage = document.getElementById("permanentVillageTown");
+
+    // GET FIELD GROUPS
+    const currentDistrictGroup = currentDistrict.closest(".field-group");
+    const currentCityGroup = currentCity.closest(".field-group");
+    const currentVillageGroup = currentVillage.closest(".field-group");
+    const permanentDistrictGroup = permanentDistrict.closest(".field-group");
+    const permanentCityGroup = permanentCity.closest(".field-group");
+    const permanentVillageGroup = permanentVillage.closest(".field-group");
+
+    // HIDE ALL INITIALLY
+    currentDistrictGroup.style.display = "none";
+    currentCityGroup.style.display = "none";
+    currentVillageGroup.style.display = "none";
+    permanentDistrictGroup.style.display = "none";
+    permanentCityGroup.style.display = "none";
+    permanentVillageGroup.style.display = "none";
+
+    // Load states on page load
+    loadStates();
+
+    // Handle dropdown changes - Current Address
+    currentState.addEventListener("change", function() {
+        if (this.value!== "") {
+            currentDistrictGroup.style.display = "block";
+            loadDistricts(this.value, currentDistrict);
+        } else {
+            currentDistrictGroup.style.display = "none";
+            currentCityGroup.style.display = "none";
+            currentVillageGroup.style.display = "none";
+            resetDropdown(currentDistrict, "Select District");
+            resetDropdown(currentCity, "Select City");
+            resetDropdown(currentVillage, "Select Village");
+            resetDropdown(currentPin, "Select PIN Code");
+        }
+    });
+
+    currentDistrict.addEventListener("change", function() {
+        if (this.value!== "") {
+            currentCityGroup.style.display = "block";
+            loadCities(this.value, currentCity);
+        } else {
+            currentCityGroup.style.display = "none";
+            currentVillageGroup.style.display = "none";
+            resetDropdown(currentCity, "Select City");
+            resetDropdown(currentVillage, "Select Village");
+            resetDropdown(currentPin, "Select PIN Code");
+        }
+    });
+
+    currentCity.addEventListener("change", function() {
+        if (this.value!== "") {
+            currentVillageGroup.style.display = "block";
+            loadVillages(this.value, currentVillage);
+        } else {
+            currentVillageGroup.style.display = "none";
+            resetDropdown(currentVillage, "Select Village");
+            resetDropdown(currentPin, "Select PIN Code");
+        }
+    });
+
+    currentVillage.addEventListener("change", function() {
+        if (this.value!== "") {
+            loadPincodes(this.value, currentPin); // FETCH PIN DROPDOWN
+        } else {
+            resetDropdown(currentPin, "Select PIN Code");
+        }
+    });
+
+    // Handle dropdown changes - Permanent Address
+    permanentState.addEventListener("change", function() {
+        if (this.value!== "") {
+            permanentDistrictGroup.style.display = "block";
+            loadDistricts(this.value, permanentDistrict);
+        } else {
+            permanentDistrictGroup.style.display = "none";
+            permanentCityGroup.style.display = "none";
+            permanentVillageGroup.style.display = "none";
+            resetDropdown(permanentDistrict, "Select District");
+            resetDropdown(permanentCity, "Select City");
+            resetDropdown(permanentVillage, "Select Village");
+            resetDropdown(permanentPin, "Select PIN Code");
+        }
+    });
+
+    permanentDistrict.addEventListener("change", function() {
+        if (this.value!== "") {
+            permanentCityGroup.style.display = "block";
+            loadCities(this.value, permanentCity);
+        } else {
+            permanentCityGroup.style.display = "none";
+            permanentVillageGroup.style.display = "none";
+            resetDropdown(permanentCity, "Select City");
+            resetDropdown(permanentVillage, "Select Village");
+            resetDropdown(permanentPin, "Select PIN Code");
+        }
+    });
+
+    permanentCity.addEventListener("change", function() {
+        if (this.value!== "") {
+            permanentVillageGroup.style.display = "block";
+            loadVillages(this.value, permanentVillage);
+        } else {
+            permanentVillageGroup.style.display = "none";
+            resetDropdown(permanentVillage, "Select Village");
+            resetDropdown(permanentPin, "Select PIN Code");
+        }
+    });
+
+    permanentVillage.addEventListener("change", function() {
+        if (this.value!== "") {
+            loadPincodes(this.value, permanentPin); // FETCH PIN DROPDOWN
+        } else {
+            resetDropdown(permanentPin, "Select PIN Code");
+        }
+    });
+
+    function resetDropdown(element, defaultText) {
+        if (element) element.innerHTML = `<option value="">${defaultText}</option>`;
+    }
+
+    function loadStates() {
+        fetch(STATE_API)
+        .then(res => res.json())
+        .then(data => {
+                console.log("States:", data);
+                if (!Array.isArray(data)) data = [];
+
+                let html = '<option value="">Select State</option>';
+                data.forEach(item => {
+                    const id = item.id || item.state_id;
+                    const name = item.name || item.state_name;
+                    html += `<option value="${id}">${name}</option>`;
+                });
+
+                currentState.innerHTML = html;
+                permanentState.innerHTML = html;
+            })
+        .catch(err => console.error("State API Error:", err));
+    }
+
+    function loadDistricts(stateId, targetDropdown) {
+        if (!stateId) return;
+        targetDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        fetch(`${DISTRICT_API}${stateId}`)
+        .then(res => res.json())
+        .then(data => {
+                console.log("Districts:", data);
+                if (!Array.isArray(data)) data = [];
+
+                let html = '<option value="">Select District</option>';
+                data.forEach(item => {
+                    const id = item.id || item.district_id;
+                    const name = item.name || item.district_name;
+                    html += `<option value="${id}">${name}</option>`;
+                });
+
+                targetDropdown.innerHTML = html;
+            })
+        .catch(err => {
+                console.error("District API Error:", err);
+                targetDropdown.innerHTML = '<option value="">Failed to load</option>';
+            });
+    }
+
+    function loadCities(districtId, targetDropdown) {
+        if (!districtId) return;
+        targetDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        fetch(`${CITY_API}${districtId}`)
+        .then(res => res.json())
+        .then(data => {
+                console.log("Cities:", data);
+                if (!Array.isArray(data)) data = [];
+
+                let html = '<option value="">Select City</option>';
+                data.forEach(item => {
+                    const id = item.id || item.city_id;
+                    const name = item.name || item.city_name;
+                    html += `<option value="${id}">${name}</option>`;
+                });
+
+                targetDropdown.innerHTML = html;
+            })
+        .catch(err => {
+                console.error("City API Error:", err);
+                targetDropdown.innerHTML = '<option value="">Failed to load</option>';
+            });
+    }
+
+    function loadVillages(cityId, targetDropdown) {
+        if (!cityId) return;
+        targetDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        fetch(`${VILLAGE_API}${cityId}`)
+        .then(res => res.json())
+        .then(data => {
+                console.log("Villages:", data);
+                if (!Array.isArray(data)) data = [];
+
+                let html = '<option value="">Select Village</option>';
+                data.forEach(item => {
+                    const id = item.village_short_name||item.id || item.village_id;
+                    const name = item.name || item.village_name;
+                    html += `<option value="${id}">${name}</option>`;
+                });
+
+                targetDropdown.innerHTML = html;
+            })
+        .catch(err => {
+                console.error("Village API Error:", err);
+                targetDropdown.innerHTML = '<option value="">Failed to load</option>';
+            });
+    }
+
+    // PIN CODE DROPDOWN FETCH
+    function loadPincodes(villaId, targetPinDropdown) {
+        if (!villaId || !targetPinDropdown) return;
+        targetPinDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        const url = (`${PINCODE_API}${villaId}`);
+        console.log("Fetching PIN codes from URL:", url);
+        fetch(url)
+        .then(res => res.json())
+        .then(data => {
+                console.log("Pincodes:", data);
+
+                const records = Array.isArray(data)
+                    ? data
+                    : (Array.isArray(data?.data)
+                        ? data.data
+                        : Object.values(data || {}).filter(Boolean));
+
+                let html = '<option value="">Select PIN Code</option>';
+                const uniquePins = new Set();
+                records.forEach(item => {
+                    const entry = item && typeof item === "object" ? item : {};
+                    const pin = entry.pincode || entry.pin || entry.postal_code || entry.pincode_id;
+                    const label = pin === "OTHER" && entry.post_office_name
+                        ? `${pin} - ${entry.post_office_name}`
+                        : pin;
+
+                    if (pin && !uniquePins.has(pin)) {
+                        uniquePins.add(pin);
+                        html += `<option value="${pin}">${label}</option>`;
+                    }
+                });
+
+                targetPinDropdown.innerHTML = html;
+            })
+        .catch(err => {
+                console.error("Pincode API Error:", err);
+                targetPinDropdown.innerHTML = '<option value="">Failed to load</option>';
+            });
+    }
+
+
     // SAFETY CHECKS
     if (!editToggleBtn) {
         console.error("locationEditToggleBtn NOT FOUND");
@@ -443,50 +718,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // LOCATION STEP VISIBILITY LOGIC
 // ===================================
 
-// CURRENT ADDRESS
-const currentState =
-    document.getElementById("currentState");
 
-const currentDistrict =
-    document.getElementById("currentDistrict");
 
-const currentCity =
-    document.getElementById("currentCityTaluka");
-
-const currentVillage =
-    document.getElementById("currentVillageTown");
-
-// PERMANENT ADDRESS
-const permanentState =
-    document.getElementById("permanentState");
-
-const permanentDistrict =
-    document.getElementById("permanentDistrict");
-
-const permanentCity =
-    document.getElementById("permanentCityTaluka");
-
-const permanentVillage =
-    document.getElementById("permanentVillageTown");
-
-// GET FIELD GROUPS
-const currentDistrictGroup =
-    currentDistrict.closest(".field-group");
-
-const currentCityGroup =
-    currentCity.closest(".field-group");
-
-const currentVillageGroup =
-    currentVillage.closest(".field-group");
-
-const permanentDistrictGroup =
-    permanentDistrict.closest(".field-group");
-
-const permanentCityGroup =
-    permanentCity.closest(".field-group");
-
-const permanentVillageGroup =
-    permanentVillage.closest(".field-group");
 
 // HIDE ALL INITIALLY
 currentDistrictGroup.style.display = "none";
